@@ -1,0 +1,61 @@
+# Base configuration for the revenue prediction accelerator.
+# Environment-specific files (dev/test/prod) override these values.
+# Secrets and cloud identifiers MUST come from environment variables, never
+# from these files.
+
+environment: dev
+
+data:
+  seed: 42
+  n_facilities: 6
+  n_months: 30
+  start_year: 2023
+  start_month: 1
+  snapshot_days: [7, 10, 12, 15, 18, 21, 24, 27]
+  demo_cutoff_day: 15
+  missing_rate: 0.03
+  outlier_rate: 0.01
+  noise_scale: 0.04
+  raw_dir: data/synthetic
+  sample_dir: data/sample
+
+split:
+  strategy: blocked_temporal
+  n_test_months: 4
+  n_val_months: 4
+  n_backtest_folds: 3
+
+model:
+  candidates:
+    - naive_prior
+    - seasonal_naive
+    - elastic_net
+    - hist_gradient_boosting
+    - xgboost
+  primary_metric: mae
+  random_state: 42
+
+evaluation:
+  metrics: [mae, rmse, mape, smape, r2]
+  by_snapshot_day: true
+  by_facility: true
+  challenger_improvement_threshold: 0.02
+
+automl:
+  task: regression
+  primary_metric: normalized_root_mean_squared_error
+  experiment_name: revenue-automl
+  timeout_minutes: 30
+  max_trials: 20
+
+azure_ml:
+  location: eastus2
+  compute_cluster: cpu-cluster
+  environment_name: revenue-prediction-env
+  registered_model_name: revenue-net-revenue-model
+  online_endpoint_name: revenue-online-endpoint
+
+fabric:
+  onelake_account_url: https://onelake.dfs.fabric.microsoft.com
+  input_path: Files/revenue/input
+  predictions_path: Files/revenue/predictions

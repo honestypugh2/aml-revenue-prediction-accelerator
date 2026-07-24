@@ -1,0 +1,29 @@
+# Test environment overrides.
+# Deterministic, tiny dataset for CI and automated tests.
+
+environment: test
+
+data:
+  seed: 7
+  n_facilities: 3
+  n_months: 18
+  snapshot_days: [10, 15, 20]
+  missing_rate: 0.02
+  outlier_rate: 0.0
+
+split:
+  n_test_months: 3
+  n_val_months: 3
+  n_backtest_folds: 2
+
+model:
+  candidates:
+    - naive_prior
+    - seasonal_naive
+    - elastic_net
+    - hist_gradient_boosting
+
+automl:
+  experiment_name: revenue-automl-test
+  timeout_minutes: 10
+  max_trials: 5

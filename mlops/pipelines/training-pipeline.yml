@@ -1,0 +1,30 @@
+# Azure Machine Learning pipeline (SDK v2 / CLI v2): code-first training.
+# A minimal, single-step pipeline wrapping the training component. Extend with
+# data-prep and evaluation steps as needed.
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: revenue-code-first-training-pipeline
+description: >-
+  Train and compare code-first candidates, select champion, log MLflow model.
+  Synthetic data only.
+experiment_name: revenue-code-first
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  training_data:
+    type: uri_file
+    path: azureml:revenue_snapshots@latest
+  environment_name: dev
+
+jobs:
+  train:
+    type: command
+    component: ../components/train_code_first.yml
+    inputs:
+      training_data: ${{parent.inputs.training_data}}
+      environment_name: ${{parent.inputs.environment_name}}
+    outputs:
+      model_dir:
+        type: uri_folder

@@ -1,0 +1,15 @@
+# OPTIONAL managed online endpoint + deployment (SDK v2 / CLI v2) for
+# low-latency, on-demand scoring. Prefer batch unless you need real-time.
+# Remember to DELETE the endpoint when idle to control cost.
+#
+# Create:
+#   az ml online-endpoint create -f mlops/endpoints/online-endpoint.yml -g <rg> -w <ws>
+#   az ml online-deployment create -f mlops/endpoints/online-deployment.yml -g <rg> -w <ws> --all-traffic
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: revenue-online-endpoint
+description: >-
+  Optional real-time endpoint for net-revenue predictions. Synthetic data only.
+  Delete when idle to avoid charges.
+auth_mode: aad_token
+tags:
+  workload: revenue-prediction-accelerator

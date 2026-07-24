@@ -1,0 +1,31 @@
+# Azure Machine Learning command component (SDK v2 / CLI v2) for code-first
+# training. Runs the accelerator's training entry point.
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: revenue_code_first_training
+display_name: Revenue net-revenue code-first training
+version: "1"
+description: >-
+  Train and compare code-first candidates with time-aware validation, select a
+  champion, and log the MLflow model. Synthetic data only.
+
+inputs:
+  training_data:
+    type: uri_file
+    description: Snapshot dataset (parquet/csv) at the facility-month-snapshot grain.
+  environment_name:
+    type: string
+    default: dev
+
+outputs:
+  model_dir:
+    type: uri_folder
+    description: Champion model bundle and MLflow model output.
+
+code: ../../src
+environment: azureml:revenue-prediction-env@latest
+command: >-
+  python -m revenue_prediction.training.azureml_entry
+  --data ${{inputs.training_data}}
+  --env ${{inputs.environment_name}}
+  --output ${{outputs.model_dir}}

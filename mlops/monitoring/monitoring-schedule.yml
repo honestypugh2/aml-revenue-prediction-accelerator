@@ -1,0 +1,55 @@
+# Azure Machine Learning model monitoring schedule (SDK v2 / CLI v2).
+# Prepares data-drift, prediction-drift, and data-quality signals for the
+# net-revenue model. Adjust asset URIs to your workspace before applying.
+$schema: https://azuremlschemas.azureedge.net/latest/monitoringSchedule.schema.json
+name: revenue-model-monitoring
+description: >-
+  Scheduled monitoring for the net-revenue model: input drift, prediction drift,
+  and data quality. Synthetic data only.
+trigger:
+  type: recurrence
+  frequency: week
+  interval: 1
+create_monitor:
+  compute:
+    instance_type: Standard_DS3_v2
+    runtime_version: "3.3"
+  monitoring_signals:
+    input_drift:
+      type: data_drift
+      production_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_inference_recent@latest
+      reference_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_training_reference@latest
+      features:
+        top_n_feature_importance: 10
+      metric_thresholds:
+        numerical:
+          jensen_shannon_distance: 0.1
+    prediction_drift:
+      type: prediction_drift
+      production_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_predictions_recent@latest
+      reference_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_predictions_reference@latest
+      metric_thresholds:
+        numerical:
+          jensen_shannon_distance: 0.1
+    data_quality:
+      type: data_quality
+      production_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_inference_recent@latest
+      reference_data:
+        input_data:
+          type: uri_folder
+          path: azureml:revenue_training_reference@latest

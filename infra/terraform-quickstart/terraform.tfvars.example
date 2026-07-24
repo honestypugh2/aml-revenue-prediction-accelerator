@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and adjust. Do not commit terraform.tfvars.
+name_prefix         = "revpred"
+location            = "eastus2"
+resource_group_name = "rg-revenue-prediction-quickstart"
+
+tags = {
+  workload    = "revenue-prediction-accelerator"
+  data        = "synthetic"
+  environment = "dev"
+  profile     = "quickstart"
+}

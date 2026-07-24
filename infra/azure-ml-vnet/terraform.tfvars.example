@@ -1,0 +1,15 @@
+# Copy to terraform.tfvars and adjust. Do not commit terraform.tfvars.
+name_prefix         = "revpred"
+location            = "eastus2"
+resource_group_name = "rg-revenue-prediction-network"
+
+vnet_address_space = ["10.40.0.0/16"]
+aml_subnet_prefix  = "10.40.1.0/24"
+pe_subnet_prefix   = "10.40.2.0/24"
+
+tags = {
+  workload    = "revenue-prediction-accelerator"
+  data        = "synthetic"
+  environment = "shared"
+  profile     = "byo-vnet"
+}

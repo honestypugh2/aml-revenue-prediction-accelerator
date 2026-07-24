@@ -1,0 +1,14 @@
+# Azure Machine Learning environment definition (SDK v2 / CLI v2).
+# Register with:
+#   az ml environment create -f mlops/environments/environment.yml -g <rg> -w <ws>
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+name: revenue-prediction-env
+version: "1"
+description: >-
+  Training/inference environment for the healthcare net-revenue prediction
+  accelerator. Synthetic data only.
+image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
+conda_file: training-env.yml
+tags:
+  workload: revenue-prediction-accelerator
+  data: synthetic

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RevenuePredictionIO",
+  "description": "Request/response contract for online scoring of the net-revenue model.",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "description": "A batch of snapshot records to score (target NOT required).",
+      "properties": {
+        "input_data": {
+          "type": "object",
+          "properties": {
+            "columns": { "type": "array", "items": { "type": "string" } },
+            "data": {
+              "type": "array",
+              "items": { "type": "array" },
+              "description": "Rows aligned to columns; feature columns only, no target."
+            }
+          },
+          "required": ["columns", "data"]
+        }
+      },
+      "required": ["input_data"]
+    },
+    "response": {
+      "type": "array",
+      "description": "One prediction record per input row.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "facility_id": { "type": "string" },
+          "accounting_month": { "type": "string" },
+          "snapshot_date": { "type": "string" },
+          "snapshot_day": { "type": "integer" },
+          "predicted_month_end_net_revenue": { "type": "number" },
+          "prediction_lower": { "type": ["number", "null"] },
+          "prediction_upper": { "type": ["number", "null"] },
+          "model_name": { "type": "string" },
+          "model_version": { "type": "string" },
+          "run_id": { "type": "string" },
+          "cutoff_day": { "type": ["integer", "null"] },
+          "scored_at": { "type": "string" }
+        },
+        "required": ["predicted_month_end_net_revenue", "model_version", "run_id", "scored_at"]
+      }
+    }
+  }
+}

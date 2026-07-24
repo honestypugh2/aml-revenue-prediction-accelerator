@@ -1,0 +1,14 @@
+# Azure Machine Learning batch endpoint + deployment (SDK v2 / CLI v2).
+# Batch scoring is the recommended, cost-efficient default.
+#
+# Create:
+#   az ml batch-endpoint create -f mlops/endpoints/batch-endpoint.yml -g <rg> -w <ws>
+#   az ml batch-deployment create -f mlops/endpoints/batch-deployment.yml -g <rg> -w <ws> --set-default
+$schema: https://azuremlschemas.azureedge.net/latest/batchEndpoint.schema.json
+name: revenue-batch-endpoint
+description: >-
+  Batch scoring endpoint for month-end net-revenue predictions. Synthetic data
+  only.
+auth_mode: aad_token
+tags:
+  workload: revenue-prediction-accelerator

@@ -1,0 +1,13 @@
+# Development environment overrides.
+# Small, fast dataset for local iteration and workshops.
+
+environment: dev
+
+data:
+  n_facilities: 6
+  n_months: 30
+
+automl:
+  experiment_name: revenue-automl-dev
+  timeout_minutes: 20
+  max_trials: 10

@@ -1,0 +1,15 @@
+# Managed online deployment for the registered champion model.
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: champion
+endpoint_name: revenue-online-endpoint
+model: azureml:revenue-net-revenue-model@latest
+instance_type: Standard_DS3_v2
+instance_count: 1
+request_settings:
+  request_timeout_ms: 5000
+  max_concurrent_requests_per_instance: 2
+liveness_probe:
+  initial_delay: 30
+  period: 30
+  timeout: 5
+  failure_threshold: 3

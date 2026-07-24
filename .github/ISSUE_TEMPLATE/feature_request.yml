@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an enhancement to the accelerator.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please keep suggestions customer-neutral and aligned with the
+        accelerator's scope (synthetic data, Azure ML v2, Fabric, MLOps,
+        education). Do not include real data or identifiers.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What are you trying to achieve, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the change and where it fits (src/docs/infra/mlops).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: neutrality
+    attributes:
+      label: Neutrality
+      options:
+        - label: This request contains no customer, patient, or secret information.
+          required: true

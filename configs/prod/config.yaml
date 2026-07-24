@@ -1,0 +1,20 @@
+# Production environment overrides.
+# Larger history and full model set. Cloud identifiers still come from
+# environment variables only.
+
+environment: prod
+
+data:
+  n_facilities: 12
+  n_months: 36
+
+split:
+  n_test_months: 6
+  n_val_months: 6
+  n_backtest_folds: 4
+
+automl:
+  experiment_name: revenue-automl-prod
+  timeout_minutes: 60
+  max_trials: 50
+  max_concurrent_trials: 8
