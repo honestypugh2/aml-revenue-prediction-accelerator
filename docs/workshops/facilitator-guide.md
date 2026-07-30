@@ -30,20 +30,23 @@ Adjust to a 2-hour or full-day format by including/excluding the cloud demos.
 ## Setup (facilitator, before the session)
 
 ```bash
-uv sync --extra ui
+uv sync --extra api
 uv run revenue-prediction generate-data --env dev
-uv run streamlit run src/revenue_prediction/ui/app.py   # sanity check
+npm --prefix frontend install && npm --prefix frontend run build
+uv run revenue-prediction serve            # sanity check -> http://127.0.0.1:8000
 ```
 
 Have `make check` passing so learners see a green baseline.
 
 ## Running each segment
 
-- Use the **Streamlit app** (`make ui`) for framing, data exploration, live
-  training, and the built-in knowledge checks.
+- Use the **React app** (`make ui`, or the Vite dev server) for framing, data
+  exploration, live training, and the built-in knowledge checks. A persistent
+  **Learn panel** shows contextual guidance for whatever segment you are on, so
+  learning is woven through every screen rather than siloed in one tab.
 - Use the **exercises** in [`exercises.md`](exercises.md) for hands-on work.
 - Use the **knowledge checks** in [`knowledge-checks.md`](knowledge-checks.md)
-  (also embedded in the UI) to assess understanding.
+  (also embedded in the UI, graded server-side) to assess understanding.
 
 ## Facilitation tips
 

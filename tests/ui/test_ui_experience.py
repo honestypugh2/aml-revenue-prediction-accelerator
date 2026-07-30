@@ -1,4 +1,4 @@
-"""Tests for the UI logic layer (no Streamlit runtime required)."""
+"""Tests for the UI logic layer (framework-agnostic; no web runtime required)."""
 
 from __future__ import annotations
 

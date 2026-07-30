@@ -120,5 +120,22 @@ def info(environment: str = typer.Option("dev", "--env", "-e")) -> None:
     console.print(f"[bold]Fabric configured:[/] {settings.fabric.is_configured()}")
 
 
+@app.command("serve")
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host"),
+    port: int = typer.Option(8000, "--port", "-p"),
+    reload: bool = typer.Option(False, "--reload", help="Auto-reload for development"),
+) -> None:
+    """Serve the API (and built React UI, if present). Requires the 'api' extra."""
+    try:
+        import uvicorn
+    except ImportError as exc:  # pragma: no cover
+        console.print("[red]FastAPI/uvicorn not installed. Run:[/] uv sync --extra api")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[green]Serving on http://{host}:{port}[/]  (API docs at /docs)")
+    uvicorn.run("revenue_prediction.api.app:app", host=host, port=port, reload=reload)
+
+
 if __name__ == "__main__":  # pragma: no cover
     app()

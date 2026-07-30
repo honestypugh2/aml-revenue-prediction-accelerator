@@ -7,7 +7,7 @@
     Which extra to install (default 'ui'). Pass 'all' to install everything.
 #>
 param(
-    [string]$Extras = "ui"
+    [string]$Extras = "api"
 )
 
 $ErrorActionPreference = "Stop"
@@ -40,7 +40,12 @@ Write-Host @"
 Next steps:
   uv run revenue-prediction generate-data --env dev
   uv run revenue-prediction train-local  --env dev --out outputs
-  uv run streamlit run src/revenue_prediction/ui/app.py
+
+  # Backend API (serves the built React UI at / if present):
+  uv run revenue-prediction serve --reload
+
+  # React frontend (dev server, proxies /api -> backend):
+  npm --prefix frontend install; npm --prefix frontend run dev
 
 All data is synthetic. Cloud steps are opt-in; see docs/deployment/guide.md.
 "@

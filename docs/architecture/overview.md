@@ -45,7 +45,8 @@ flowchart TD
 | Monitoring | `monitoring` | PSI / drift preparation |
 | Security | `security` | Redaction, neutrality scanning |
 | Education | `education` | Original lessons and knowledge checks |
-| UI | `ui` | Streamlit experience (thin over testable logic) |
+| UI logic | `ui` | Framework-agnostic experience helpers (pure, testable) |
+| API | `api` | FastAPI backend serving the React UI over the core |
 | Pipelines | `pipelines` | Offline end-to-end orchestration |
 
 ## Environments

@@ -21,9 +21,16 @@
       "problemMatcher": []
     },
     {
-      "label": "ui",
+      "label": "serve",
       "type": "shell",
-      "command": "uv run streamlit run src/revenue_prediction/ui/app.py",
+      "command": "uv run revenue-prediction serve --reload",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "frontend-dev",
+      "type": "shell",
+      "command": "npm --prefix frontend run dev",
       "isBackground": true,
       "problemMatcher": []
     }

@@ -12,8 +12,8 @@ setup: ## Full setup (install all extras + dev + pre-commit hooks)
 	uv sync --all-extras
 	uv run pre-commit install
 
-sync: ## Install core + dev + ui dependencies
-	uv sync --extra ui
+sync: ## Install core + dev + api dependencies
+	uv sync --extra api
 
 data: ## Generate synthetic, sample, and invalid datasets
 	uv run revenue-prediction generate-data --env dev
@@ -45,9 +45,21 @@ typecheck: ## Type check with pyright
 
 check: lint typecheck test ## Run all quality gates
 
-ui: ## Launch the Streamlit educational / workshop UI
-	uv run streamlit run src/revenue_prediction/ui/app.py
+serve: ## Run the FastAPI backend (serves the built React UI at / if present)
+	uv run revenue-prediction serve --reload
+
+frontend-install: ## Install the React frontend dependencies
+	npm --prefix frontend install
+
+frontend-dev: ## Run the Vite dev server (proxies /api to the backend)
+	npm --prefix frontend run dev
+
+frontend-build: ## Build the React frontend into frontend/dist
+	npm --prefix frontend run build
+
+ui: frontend-build ## Build the UI and serve it via the backend at http://127.0.0.1:8000
+	uv run revenue-prediction serve
 
 clean: ## Remove caches and generated artifacts
-	rm -rf .pytest_cache .ruff_cache .coverage htmlcov outputs mlruns
+	rm -rf .pytest_cache .ruff_cache .coverage htmlcov outputs mlruns frontend/dist
 	find . -type d -name __pycache__ -exec rm -rf {} +

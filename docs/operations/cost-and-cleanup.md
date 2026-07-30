@@ -50,6 +50,6 @@ targeting the correct group and that no other workloads share it.
 
 ## Offline-first for learning
 
-The entire education/workshop path runs offline with `uv sync --extra ui` and the
+The entire education/workshop path runs offline with `uv sync --extra api` and the
 synthetic generator — zero cloud cost. Use the cloud only when demonstrating the
 Azure ML / Fabric integration.

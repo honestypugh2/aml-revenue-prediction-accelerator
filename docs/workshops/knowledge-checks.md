@@ -1,6 +1,6 @@
 # Knowledge checks
 
-These mirror the interactive checks embedded in the Streamlit app
+These mirror the interactive checks embedded in the React app
 (`revenue_prediction.education`). Answers are at the bottom.
 
 1. **What is the prediction grain of the default demonstration?**

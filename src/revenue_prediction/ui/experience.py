@@ -1,4 +1,4 @@
-"""Pure, testable logic backing the Streamlit UI (no streamlit import)."""
+"""Pure, testable logic backing the UI (no web-framework import)."""
 
 from __future__ import annotations
 

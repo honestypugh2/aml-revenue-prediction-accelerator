@@ -43,8 +43,8 @@ accounting close**.
    assets, secure infrastructure as code, CI/CD.
 2. **End-to-end Azure ML + Microsoft Fabric demonstration** — AutoML *and*
    code-first training, OneLake I/O, Power BI-ready output.
-3. **Self-guided educational experience** — an original interactive Streamlit
-   experience plus structured docs.
+3. **Self-guided educational experience** — an original interactive **React**
+   experience with a pervasive, in-context learning layer, plus structured docs.
 4. **Instructor-led workshop** — exercises, facilitator guide, knowledge checks.
 
 ## Two Azure Machine Learning v2 approaches
@@ -56,8 +56,8 @@ accounting close**.
 ## Quickstart (fully offline)
 
 ```bash
-# 1. Install dependencies (creates .venv)
-uv sync --extra ui
+# 1. Install backend dependencies (creates .venv)
+uv sync --extra api
 
 # 2. Generate the synthetic dataset
 uv run revenue-prediction generate-data
@@ -65,8 +65,13 @@ uv run revenue-prediction generate-data
 # 3. Train and compare code-first candidates locally
 uv run revenue-prediction train-local
 
-# 4. Launch the educational / workshop UI
-uv run streamlit run src/revenue_prediction/ui/app.py
+# 4a. Build the React UI and serve it with the API (single URL)
+npm --prefix frontend install && npm --prefix frontend run build
+uv run revenue-prediction serve            # http://127.0.0.1:8000  (API docs at /docs)
+
+# 4b. …or run the Vite dev server with hot reload (proxies /api to the backend)
+uv run revenue-prediction serve --reload   # terminal 1
+npm --prefix frontend run dev              # terminal 2 -> http://localhost:5173
 ```
 
 No Azure or Fabric credentials are required for the offline path. Cloud steps
@@ -77,7 +82,8 @@ No Azure or Fabric credentials are required for the offline path. Cloud steps
 
 | Path | Purpose |
 | --- | --- |
-| [`src/revenue_prediction/`](src/revenue_prediction/) | Core Python package |
+| [`src/revenue_prediction/`](src/revenue_prediction/) | Core Python package (incl. FastAPI backend under `api/`) |
+| [`frontend/`](frontend/) | React + TypeScript educational UI (Vite) |
 | [`configs/`](configs/) | Layered base/dev/test/prod configuration |
 | [`data/`](data/) | Synthetic data, contracts, dictionary, provenance |
 | [`mlops/`](mlops/) | Components, environments, endpoints, monitoring, schemas |

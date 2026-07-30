@@ -45,7 +45,8 @@ model governance.
 ## Where the experience lives
 
 - Content: [`src/revenue_prediction/education/`](../../src/revenue_prediction/education/)
-  (original lessons and knowledge checks).
-- Interactive UI: [`src/revenue_prediction/ui/`](../../src/revenue_prediction/ui/)
-  (original Streamlit app).
+  (original lessons, knowledge checks, and the pervasive contextual-note layer).
+- Interactive UI: [`frontend/`](../../frontend/) (original React + TypeScript app)
+  backed by [`src/revenue_prediction/api/`](../../src/revenue_prediction/api/)
+  (FastAPI).
 - Workshop materials: [`docs/workshops/`](../workshops/).

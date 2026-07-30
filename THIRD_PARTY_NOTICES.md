@@ -30,12 +30,17 @@ MIT license.
 
 - **Article:** "ArchAngel: Skilling the next developer generation for the
   Agentic transformation" (Microsoft Tech Community blog).
+- **Supporting repository:** `rohitmadhavk/ArchAngel`
+  (https://github.com/rohitmadhavk/ArchAngel).
 - **How it was used:** As *conceptual inspiration only* for the idea of
   contextual, repository-grounded, interactive learning. **No source code,
   prose, prompts, screenshots, visual design, diagrams, branded terminology,
   names, logos, characters, product identity, UI structure, or repository
-  structure were copied.** See `docs/education/inspiration.md`. This project is
-  not a fork, reproduction, derivative, or official implementation of that work.
+  structure were copied from either the article or the supporting repository.**
+  The React UI, FastAPI backend, contextual-note layer, lessons, and knowledge
+  checks in this project are original work. See `docs/education/inspiration.md`.
+  This project is not a fork, reproduction, derivative, or official
+  implementation of that work.
 
 ## 3. Microsoft documentation
 
@@ -48,11 +53,14 @@ this repository is original.
 
 This project uses open-source Python packages declared in `pyproject.toml`,
 including (non-exhaustive): NumPy, pandas, PyArrow, scikit-learn, XGBoost,
-Pandera, MLflow, Pydantic, pydantic-settings, Typer, Rich, Streamlit, Plotly,
-Matplotlib, and (optional) `azure-ai-ml`, `azure-identity`, `azureml-mlflow`,
-`mltable`, `azure-storage-file-datalake`, and `azure-ai-projects`. Each is
-distributed under its own license (predominantly BSD-3-Clause, Apache-2.0, or
-MIT). Their license texts are available in the installed package metadata and on
+Pandera, MLflow, Pydantic, pydantic-settings, Typer, Rich, and (optional)
+FastAPI, Uvicorn, `azure-ai-ml`, `azure-identity`, `azureml-mlflow`, `mltable`,
+`azure-storage-file-datalake`, and `azure-ai-projects`. The React frontend under
+`frontend/` uses npm packages declared in `frontend/package.json` — React,
+React DOM, TanStack Query, and (dev) Vite, TypeScript, and
+`@vitejs/plugin-react`. Each is distributed under its own license (predominantly
+BSD-3-Clause, Apache-2.0, or MIT). Their license texts are available in the
+installed package metadata and on
 their respective project pages. No source from these packages is redistributed
 here beyond normal dependency usage.
 

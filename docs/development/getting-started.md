@@ -10,7 +10,7 @@
 ## Install
 
 ```bash
-uv sync --extra ui          # offline dev + UI (recommended)
+uv sync --extra api          # offline dev + API backend (recommended)
 # or
 uv sync --all-extras        # include azure, fabric, notebooks, foundry
 uv run pre-commit install   # optional git hooks
@@ -22,7 +22,7 @@ uv run pre-commit install   # optional git hooks
 make data      # generate synthetic + sample + invalid datasets
 make train     # train & compare candidates, save champion bundle
 make predict   # batch score with the champion bundle
-make ui        # launch the Streamlit experience
+make ui        # build the React UI and serve it with the API
 make check     # ruff + pyright + pytest
 ```
 

@@ -11,17 +11,25 @@ source code, prose, visual design, branding, or UI was copied.
 from __future__ import annotations
 
 from .content import (
+    AREAS,
+    ContextualNote,
     KnowledgeCheck,
     Lesson,
+    get_contextual_notes,
     get_knowledge_checks,
+    get_lesson,
     get_lessons,
     grade_answer,
 )
 
 __all__ = [
+    "AREAS",
+    "ContextualNote",
     "KnowledgeCheck",
     "Lesson",
+    "get_contextual_notes",
     "get_knowledge_checks",
+    "get_lesson",
     "get_lessons",
     "grade_answer",
 ]

@@ -3,7 +3,7 @@
 ## Tooling
 
 - **Python** `>=3.11,<3.13` — compatible with the selected stable versions of
-  Azure ML SDK v2, MLflow, scikit-learn, XGBoost, Streamlit, and the Fabric
+  Azure ML SDK v2, MLflow, scikit-learn, XGBoost, FastAPI, and the Fabric
   ADLS client.
 - **uv** for environment and dependency management, with a committed `uv.lock`.
 - **src layout**, type hints, Pydantic v2 + pydantic-settings, Ruff, Pyright,
@@ -22,7 +22,7 @@ Optional integrations live under `[project.optional-dependencies]`:
 | --- | --- |
 | `azure` | `azure-ai-ml`, `azure-identity`, `azureml-mlflow`, `mltable` |
 | `fabric` | `azure-storage-file-datalake`, `azure-identity` (OneLake) |
-| `ui` | `streamlit`, `plotly`, `matplotlib` |
+| `api` | `fastapi`, `uvicorn[standard]` (backend for the React UI) |
 | `notebooks` | `jupyter`, `ipykernel`, `nbformat` |
 | `foundry` | `azure-ai-projects` (optional Azure AI Foundry) |
 
@@ -74,5 +74,5 @@ development.
 
 ```bash
 uv sync --all-extras   # everything
-uv sync --extra ui     # offline dev + UI (recommended default)
+uv sync --extra api    # offline dev + API backend (recommended default)
 ```

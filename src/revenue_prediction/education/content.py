@@ -27,6 +27,23 @@ class KnowledgeCheck:
     explanation: str
 
 
+@dataclass(frozen=True)
+class ContextualNote:
+    """A short, in-context learning note pinned to a specific area of the app.
+
+    Contextual notes power the *pervasive* self-guided experience: wherever the
+    learner is (dataset overview, training, predictions, governance, ...), a
+    relevant, bite-sized note explains what they are looking at and why it
+    matters, and links to a deeper lesson.
+    """
+
+    area: str
+    title: str
+    detail: str
+    lesson_key: str | None = None
+    tip: str | None = None
+
+
 _LESSONS: list[Lesson] = [
     Lesson(
         key="problem_framing",
@@ -214,3 +231,140 @@ def get_knowledge_checks() -> list[KnowledgeCheck]:
 def grade_answer(check: KnowledgeCheck, chosen_index: int) -> bool:
     """Return True if ``chosen_index`` is the correct answer for ``check``."""
     return chosen_index == check.correct_index
+
+
+# ---------------------------------------------------------------------------
+# Contextual notes: the pervasive, in-context learning layer.
+# Keyed by "area" so any surface (React UI, notebook, workshop) can pull the
+# relevant notes for wherever the learner currently is.
+# ---------------------------------------------------------------------------
+AREAS: tuple[str, ...] = (
+    "overview",
+    "data",
+    "training",
+    "evaluation",
+    "predictions",
+    "governance",
+    "fabric",
+    "security",
+)
+
+_CONTEXTUAL_NOTES: list[ContextualNote] = [
+    ContextualNote(
+        area="overview",
+        title="You are looking at synthetic revenue-cycle data",
+        detail=(
+            "Each row is one facility-month-snapshot. The chart shows a "
+            "facility's actual month-end net revenue over time - the value we "
+            "learn to predict early, from within-month signal."
+        ),
+        lesson_key="problem_framing",
+        tip="Pick different facilities to see how seasonality and scale differ.",
+    ),
+    ContextualNote(
+        area="data",
+        title="Billing is not net revenue",
+        detail=(
+            "month_to_date_gross_charges is a billed amount. The target is net "
+            "of contractual adjustments, denials, bad debt, and charity care - "
+            "which is why a naive sum of charges over-predicts."
+        ),
+        lesson_key="billing_vs_net_revenue",
+        tip="Compare gross charges to the target for the same facility-month.",
+    ),
+    ContextualNote(
+        area="data",
+        title="Historical features use only closed months",
+        detail=(
+            "prior_month, prior_year, and rolling windows are derived strictly "
+            "from months before the current one - never from the future."
+        ),
+        lesson_key="leakage_safety",
+    ),
+    ContextualNote(
+        area="training",
+        title="Why baselines run first",
+        detail=(
+            "naive_prior and seasonal_naive set the bar. A complex model must "
+            "beat them to earn its place; sometimes, on little data, it does "
+            "not - and that is a real, useful result."
+        ),
+        lesson_key="automl_vs_code_first",
+        tip="Watch the comparison table: does the champion beat both baselines?",
+    ),
+    ContextualNote(
+        area="training",
+        title="Time-aware splits, never random rows",
+        detail=(
+            "The most recent months are the test block; earlier months train. "
+            "All snapshots of a facility-month stay together to prevent leakage."
+        ),
+        lesson_key="leakage_safety",
+    ),
+    ContextualNote(
+        area="evaluation",
+        title="Read accuracy by snapshot day",
+        detail=(
+            "Error should generally shrink as the month progresses and more "
+            "signal accrues. Accuracy by facility reveals where the model is "
+            "systematically weaker."
+        ),
+        lesson_key="problem_framing",
+        tip="If day-27 error is not better than day-7, investigate the features.",
+    ),
+    ContextualNote(
+        area="predictions",
+        title="Every prediction is self-describing",
+        detail=(
+            "Outputs carry model name/version, run id, cutoff day, and scoring "
+            "timestamp, plus uncertainty where available - so any number is "
+            "traceable to the exact model that produced it."
+        ),
+        lesson_key="governance",
+    ),
+    ContextualNote(
+        area="governance",
+        title="Champion vs challenger",
+        detail=(
+            "The champion is best on the held-out test block; the challenger is "
+            "the runner-up. A challenger is promotable only if it beats the "
+            "incumbent by the configured margin - guarding against noise."
+        ),
+        lesson_key="governance",
+    ),
+    ContextualNote(
+        area="fabric",
+        title="Power BI-ready output via OneLake",
+        detail=(
+            "Predictions are written as a flat, typed table a Fabric DirectLake "
+            "semantic model can read without copies. A local fallback keeps the "
+            "demo fully offline."
+        ),
+        lesson_key="fabric_onelake",
+    ),
+    ContextualNote(
+        area="security",
+        title="No secrets, ever",
+        detail=(
+            "All identifiers are placeholders supplied via environment "
+            "variables. Auth uses DefaultAzureCredential; production adds "
+            "network isolation and private endpoints."
+        ),
+        lesson_key="security_infra",
+    ),
+]
+
+
+def get_contextual_notes(area: str | None = None) -> list[ContextualNote]:
+    """Return contextual notes, optionally filtered to a single ``area``."""
+    if area is None:
+        return list(_CONTEXTUAL_NOTES)
+    return [note for note in _CONTEXTUAL_NOTES if note.area == area]
+
+
+def get_lesson(key: str) -> Lesson | None:
+    """Return a single lesson by key, or ``None`` if not found."""
+    for lesson in _LESSONS:
+        if lesson.key == key:
+            return lesson
+    return None

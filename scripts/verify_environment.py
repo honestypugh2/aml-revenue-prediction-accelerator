@@ -127,7 +127,8 @@ def verify_env() -> int:
     for name, mod in [
         ("azure-ai-ml", "azure.ai.ml"),
         ("azure-identity", "azure.identity"),
-        ("streamlit", "streamlit"),
+        ("fastapi", "fastapi"),
+        ("uvicorn", "uvicorn"),
         ("azure-storage-file-datalake", "azure.storage.filedatalake"),
     ]:
         _check(name, mod)
