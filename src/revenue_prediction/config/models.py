@@ -104,7 +104,7 @@ class ModelConfig(BaseModel):
             "xgboost",
         ]
     )
-    primary_metric: str = Field(default="mae", pattern="^(mae|rmse|mape|smape|r2)$")
+    primary_metric: str = Field(default="wape", pattern="^(wape|mae|rmse|mape|smape|r2)$")
     random_state: int = 42
     xgboost_params: dict[str, float | int | str] = Field(
         default_factory=lambda: {
@@ -128,7 +128,9 @@ class ModelConfig(BaseModel):
 class EvaluationConfig(BaseModel):
     """Model evaluation configuration."""
 
-    metrics: list[str] = Field(default_factory=lambda: ["mae", "rmse", "mape", "smape", "r2"])
+    metrics: list[str] = Field(
+        default_factory=lambda: ["wape", "bias", "mae", "rmse", "mape", "smape", "r2"]
+    )
     by_snapshot_day: bool = True
     by_facility: bool = True
     challenger_improvement_threshold: float = Field(default=0.02, ge=0.0)

@@ -7,9 +7,11 @@ import pandas as pd
 import pytest
 
 from revenue_prediction.evaluation.metrics import (
+    bias,
     compute_metrics,
     metrics_by_snapshot_day,
     smape,
+    wape,
 )
 from revenue_prediction.monitoring.drift import (
     population_stability_index,
@@ -26,6 +28,24 @@ def test_compute_metrics_perfect_prediction() -> None:
     assert m["mae"] == 0
     assert m["rmse"] == 0
     assert m["r2"] == pytest.approx(1.0)
+    assert m["wape"] == pytest.approx(0.0)
+    assert m["bias"] == pytest.approx(0.0)
+
+
+def test_wape_is_dollar_weighted() -> None:
+    y_true = np.array([100.0, 900.0])
+    y_pred = np.array([110.0, 990.0])  # +10% on each -> WAPE = 10%
+    assert wape(y_true, y_pred) == pytest.approx(0.10)
+    # A small facility's large % error cannot dominate the dollar-weighted score.
+    y_true2 = np.array([10.0, 9990.0])
+    y_pred2 = np.array([20.0, 9990.0])  # 100% error on the tiny facility only
+    assert wape(y_true2, y_pred2) < 0.01
+
+
+def test_bias_sign() -> None:
+    y_true = np.array([100.0, 100.0])
+    assert bias(y_true, np.array([110.0, 110.0])) == pytest.approx(0.10)  # over-forecast
+    assert bias(y_true, np.array([90.0, 90.0])) == pytest.approx(-0.10)  # under-forecast
 
 
 def test_smape_bounded() -> None:

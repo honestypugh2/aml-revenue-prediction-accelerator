@@ -26,19 +26,30 @@ DIMENSION_COLUMNS = [
 ]
 
 # --- Partial-month operational features (known as-of snapshot) -------------
+# Modeled on a generic hospital "flash report" of facility-level operational
+# statistics available mid-month. All synthetic; no source system implied.
 OPERATIONAL_FEATURES = [
     "month_to_date_encounters",
     "month_to_date_discharges",
+    "month_to_date_average_daily_census",
+    "month_to_date_occupancy_rate",
     "month_to_date_case_mix_index",
+    "month_to_date_length_of_stay",
+    "month_to_date_observation_rate",
+    "month_to_date_surgeries_inpatient",
+    "month_to_date_surgeries_outpatient",
+    "month_to_date_cath_lab_procedures",
+    "month_to_date_imaging_procedures",
+    "month_to_date_inpatient_volume",
+    "month_to_date_outpatient_volume",
     "month_to_date_gross_charges",
+    "month_to_date_gross_charges_inpatient",
+    "month_to_date_gross_charges_outpatient",
     "month_to_date_payments",
     "month_to_date_denials",
     "month_to_date_contractual_adjustments",
     "month_to_date_bad_debt",
     "month_to_date_charity_care",
-    "month_to_date_length_of_stay",
-    "month_to_date_inpatient_volume",
-    "month_to_date_outpatient_volume",
     "days_elapsed",
     "business_days_elapsed",
     "remaining_days",
@@ -55,6 +66,7 @@ HISTORICAL_FEATURES = [
     "historical_denial_rate",
     "historical_adjustment_rate",
     "historical_payer_mix",
+    "historical_charge_lag_rate",
     "month",
     "quarter",
     "month_sin",

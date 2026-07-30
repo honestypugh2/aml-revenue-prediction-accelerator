@@ -152,6 +152,8 @@ def create_app() -> FastAPI:
         ranking = [
             ModelMetrics(
                 model=str(r.model),
+                wape=float(r.wape),
+                bias=float(r.bias),
                 mae=float(r.mae),
                 rmse=float(r.rmse),
                 mape=float(r.mape),
@@ -168,6 +170,8 @@ def create_app() -> FastAPI:
                 GroupMetrics(
                     group=str(getattr(row, key)),
                     n=int(row.n),
+                    wape=float(row.wape),
+                    bias=float(row.bias),
                     mae=float(row.mae),
                     rmse=float(row.rmse),
                     mape=float(row.mape),

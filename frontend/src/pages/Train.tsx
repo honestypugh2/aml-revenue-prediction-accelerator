@@ -39,10 +39,11 @@ export function Train() {
               <thead>
                 <tr>
                   <th>Model</th>
+                  <th>WAPE</th>
+                  <th>Bias</th>
                   <th>MAE</th>
                   <th>RMSE</th>
                   <th>MAPE</th>
-                  <th>sMAPE</th>
                   <th>R²</th>
                 </tr>
               </thead>
@@ -53,10 +54,11 @@ export function Train() {
                       {m.model}
                       {m.is_champion && <span className="tag">champion</span>}
                     </td>
+                    <td>{(m.wape * 100).toFixed(2)}%</td>
+                    <td>{(m.bias * 100).toFixed(2)}%</td>
                     <td>{fmt(m.mae)}</td>
                     <td>{fmt(m.rmse)}</td>
                     <td>{(m.mape * 100).toFixed(2)}%</td>
-                    <td>{(m.smape * 100).toFixed(2)}%</td>
                     <td>{m.r2.toFixed(3)}</td>
                   </tr>
                 ))}
@@ -64,11 +66,15 @@ export function Train() {
             </table>
           </div>
 
-          <h2>MAE by model</h2>
+          <h2>WAPE by model</h2>
+          <p className="muted">
+            WAPE (dollar-weighted) is the headline metric for revenue — small facilities can’t
+            dominate it the way they can with MAPE.
+          </p>
           <BarChart
             items={result.ranking.map((m) => ({
               label: m.model.replace(/_/g, " ").slice(0, 10),
-              value: m.mae,
+              value: m.wape,
               highlight: m.is_champion,
             }))}
           />
@@ -78,7 +84,7 @@ export function Train() {
           <BarChart
             items={result.by_snapshot_day.map((g) => ({
               label: `day ${g.group}`,
-              value: g.mae,
+              value: g.wape,
             }))}
           />
         </>

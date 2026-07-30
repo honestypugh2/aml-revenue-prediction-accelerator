@@ -17,22 +17,34 @@ snapshot_date` (`snapshot_day`).
 
 ## Partial-month operational features (known as-of snapshot)
 
+Modeled on a generic hospital **flash report** of facility-level operational
+statistics available mid-month. All synthetic; no source system is implied.
+
 | Column | Type | Description |
 | --- | --- | --- |
 | `month_to_date_encounters` | float | MTD encounter count |
 | `month_to_date_discharges` | float | MTD discharges |
-| `month_to_date_case_mix_index` | float | MTD case-mix index |
+| `month_to_date_average_daily_census` | float | MTD average daily census (ADC) |
+| `month_to_date_occupancy_rate` | float | MTD occupancy (0–1) |
+| `month_to_date_case_mix_index` | float | MTD case-mix index (CMI) |
+| `month_to_date_length_of_stay` | float | MTD average length of stay (ALOS) |
+| `month_to_date_observation_rate` | float | MTD observation share (0–1) |
+| `month_to_date_surgeries_inpatient` | float | MTD inpatient surgeries |
+| `month_to_date_surgeries_outpatient` | float | MTD outpatient surgeries |
+| `month_to_date_cath_lab_procedures` | float | MTD cath-lab procedures |
+| `month_to_date_imaging_procedures` | float | MTD imaging procedures |
+| `month_to_date_inpatient_volume` | float | MTD inpatient volume |
+| `month_to_date_outpatient_volume` | float | MTD outpatient volume |
 | `month_to_date_gross_charges` | float | MTD **billed** charges (not net) |
+| `month_to_date_gross_charges_inpatient` | float | MTD inpatient gross charges |
+| `month_to_date_gross_charges_outpatient` | float | MTD outpatient gross charges |
 | `month_to_date_payments` | float | MTD payments received (lags charges) |
 | `month_to_date_denials` | float | MTD denied amounts |
 | `month_to_date_contractual_adjustments` | float | MTD contractual adjustments |
 | `month_to_date_bad_debt` | float | MTD bad debt |
 | `month_to_date_charity_care` | float | MTD charity care |
-| `month_to_date_length_of_stay` | float | MTD average length of stay |
-| `month_to_date_inpatient_volume` | float | MTD inpatient volume |
-| `month_to_date_outpatient_volume` | float | MTD outpatient volume |
 | `days_elapsed` | float | Days elapsed = `snapshot_day` |
-| `business_days_elapsed` | float | Business days elapsed through snapshot |
+| `business_days_elapsed` | float | Business (working) days elapsed through snapshot |
 | `remaining_days` | float | Days remaining in the month |
 
 ## Historical features (from strictly-prior closed months)
@@ -48,6 +60,7 @@ snapshot_date` (`snapshot_day`).
 | `historical_denial_rate` | float | Facility denial rate |
 | `historical_adjustment_rate` | float | Facility contractual-adjustment rate |
 | `historical_payer_mix` | float | Facility primary-payer share |
+| `historical_charge_lag_rate` | float | Facility late-posting / charge-lag rate |
 | `month` | int | Calendar month (1–12) |
 | `quarter` | int | Calendar quarter (1–4) |
 | `month_sin` | float | Seasonality encoding, sin |

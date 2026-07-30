@@ -57,6 +57,10 @@ class _FacilityProfile:
     encounter_class: str
     inpatient_share: float
     case_mix_index: float
+    licensed_beds: int
+    base_occupancy: float
+    observation_rate: float
+    charge_lag_rate: float
 
 
 class SyntheticDataGenerator:
@@ -110,6 +114,10 @@ class SyntheticDataGenerator:
                     encounter_class=_ENCOUNTER_CLASSES[i % len(_ENCOUNTER_CLASSES)],
                     inpatient_share=float(self._rng.uniform(0.25, 0.65)),
                     case_mix_index=float(self._rng.uniform(1.1, 1.9)),
+                    licensed_beds=int(self._rng.integers(80, 420)),
+                    base_occupancy=float(self._rng.uniform(0.58, 0.86)),
+                    observation_rate=float(self._rng.uniform(0.08, 0.18)),
+                    charge_lag_rate=float(self._rng.uniform(0.05, 0.20)),
                 )
             )
         return profiles
@@ -190,6 +198,22 @@ class SyntheticDataGenerator:
             outpatient_vol = encounters * (1.0 - profile.inpatient_share)
             los = self._rng.normal(4.2, 0.4) * profile.case_mix_index
 
+            # Flash-report operational statistics (facility-level, as-of).
+            occupancy = float(
+                np.clip(profile.base_occupancy * self._rng.normal(1.0, 0.03), 0.2, 0.99)
+            )
+            avg_daily_census = profile.licensed_beds * occupancy
+            observation_rate = float(
+                np.clip(profile.observation_rate * self._rng.normal(1.0, 0.06), 0.0, 0.6)
+            )
+            surgeries_total = encounters * 0.12
+            surgeries_ip = surgeries_total * profile.inpatient_share
+            surgeries_op = surgeries_total * (1.0 - profile.inpatient_share)
+            cath_lab = encounters * 0.04 * self._rng.normal(1.0, 0.05)
+            imaging = encounters * 0.55 * self._rng.normal(1.0, 0.05)
+            gross_ip = gross_charges * profile.inpatient_share
+            gross_op = gross_charges * (1.0 - profile.inpatient_share)
+
             snapshots.append(
                 {
                     "facility_id": profile.facility_id,
@@ -201,16 +225,25 @@ class SyntheticDataGenerator:
                     "encounter_class_group": profile.encounter_class,
                     "month_to_date_encounters": round(encounters, 2),
                     "month_to_date_discharges": round(discharges, 2),
+                    "month_to_date_average_daily_census": round(max(0.0, avg_daily_census), 2),
+                    "month_to_date_occupancy_rate": round(occupancy, 4),
                     "month_to_date_case_mix_index": round(profile.case_mix_index, 4),
+                    "month_to_date_length_of_stay": round(max(0.0, los), 3),
+                    "month_to_date_observation_rate": round(observation_rate, 4),
+                    "month_to_date_surgeries_inpatient": round(max(0.0, surgeries_ip), 2),
+                    "month_to_date_surgeries_outpatient": round(max(0.0, surgeries_op), 2),
+                    "month_to_date_cath_lab_procedures": round(max(0.0, cath_lab), 2),
+                    "month_to_date_imaging_procedures": round(max(0.0, imaging), 2),
+                    "month_to_date_inpatient_volume": round(inpatient_vol, 2),
+                    "month_to_date_outpatient_volume": round(outpatient_vol, 2),
                     "month_to_date_gross_charges": round(gross_charges, 2),
+                    "month_to_date_gross_charges_inpatient": round(max(0.0, gross_ip), 2),
+                    "month_to_date_gross_charges_outpatient": round(max(0.0, gross_op), 2),
                     "month_to_date_payments": round(max(0.0, payments), 2),
                     "month_to_date_denials": round(max(0.0, denials), 2),
                     "month_to_date_contractual_adjustments": round(max(0.0, adjustments), 2),
                     "month_to_date_bad_debt": round(max(0.0, bad_debt), 2),
                     "month_to_date_charity_care": round(max(0.0, charity), 2),
-                    "month_to_date_length_of_stay": round(max(0.0, los), 3),
-                    "month_to_date_inpatient_volume": round(inpatient_vol, 2),
-                    "month_to_date_outpatient_volume": round(outpatient_vol, 2),
                     "days_elapsed": float(day),
                     "business_days_elapsed": float(bdays),
                     "remaining_days": float(days_in_month - day),
@@ -223,6 +256,7 @@ class SyntheticDataGenerator:
                     "historical_denial_rate": round(profile.denial_rate, 4),
                     "historical_adjustment_rate": round(profile.adjustment_rate, 4),
                     "historical_payer_mix": round(profile.payer_mix, 4),
+                    "historical_charge_lag_rate": round(profile.charge_lag_rate, 4),
                     "month": int(month),
                     "quarter": int(quarter),
                     "month_sin": round(month_sin, 6),

@@ -47,6 +47,8 @@ export interface FacilitySeries {
 
 export interface ModelMetrics {
   model: string;
+  wape: number;
+  bias: number;
   mae: number;
   rmse: number;
   mape: number;
@@ -58,6 +60,8 @@ export interface ModelMetrics {
 export interface GroupMetrics {
   group: string;
   n: number;
+  wape: number;
+  bias: number;
   mae: number;
   rmse: number;
   mape: number;

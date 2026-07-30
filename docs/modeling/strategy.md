@@ -67,9 +67,16 @@ explicit, benchmarked experiment.
 
 ## Evaluation
 
-Metrics: MAE, RMSE, MAPE, sMAPE, R². Reported **overall**, **by facility**
-(aggregate accuracy), and **by snapshot day** (does accuracy improve as the
-month progresses?). See `revenue_prediction.evaluation`.
+Primary metric: **WAPE** (weighted absolute percentage error =
+`sum|y-ŷ| / sum|y|`). WAPE is dollar-weighted and stable when some facilities
+are small, so a few tiny facilities can't dominate the score the way they can
+with MAPE — which is why it is the recommended headline metric for net-revenue
+forecasting. **Bias** (signed relative error) is reported alongside it so
+directional over-/under-forecasting is visible.
+
+Full bundle: WAPE, bias, MAE, RMSE, MAPE, sMAPE, R². Reported **overall**, **by
+facility** (aggregate accuracy), and **by snapshot day** (does accuracy improve
+as the month progresses?). See `revenue_prediction.evaluation`.
 
 ## Champion / challenger
 

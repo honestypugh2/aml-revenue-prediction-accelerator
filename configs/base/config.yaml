@@ -32,11 +32,11 @@ model:
     - elastic_net
     - hist_gradient_boosting
     - xgboost
-  primary_metric: mae
+  primary_metric: wape
   random_state: 42
 
 evaluation:
-  metrics: [mae, rmse, mape, smape, r2]
+  metrics: [wape, bias, mae, rmse, mape, smape, r2]
   by_snapshot_day: true
   by_facility: true
   challenger_improvement_threshold: 0.02

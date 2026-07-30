@@ -49,6 +49,8 @@ class FacilitySeries(BaseModel):
 
 class ModelMetrics(BaseModel):
     model: str
+    wape: float
+    bias: float
     mae: float
     rmse: float
     mape: float
@@ -60,6 +62,8 @@ class ModelMetrics(BaseModel):
 class GroupMetrics(BaseModel):
     group: str
     n: int
+    wape: float
+    bias: float
     mae: float
     rmse: float
     mape: float

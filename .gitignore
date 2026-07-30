@@ -51,6 +51,13 @@ data/synthetic/*.csv
 *.pem
 *.key
 
+# Customer / workshop artifacts must never be committed (may contain a customer
+# name, participant names, vendor products, or other PII). Keep these outside
+# the repo or, if kept locally, they stay ignored.
+/*.html
+*:Zone.Identifier
+*.endpointdlp
+
 # Terraform
 .terraform/
 *.tfstate
