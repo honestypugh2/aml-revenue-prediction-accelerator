@@ -15,8 +15,8 @@ export function Train() {
     <section>
       <h1>Train &amp; compare (code-first, offline)</h1>
       <p className="lede">
-        Candidates train on a <strong>time-aware</strong> split; the champion is the best model on
-        the held-out test block. Baselines run first so complexity must earn its place.
+        Compare candidates on a <strong>time-aware</strong> split. Baselines run first, so added
+        complexity must earn its place.
       </p>
 
       <button className="btn" onClick={() => train.mutate(env)} disabled={train.isPending}>

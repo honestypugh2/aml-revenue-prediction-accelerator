@@ -100,6 +100,7 @@ class ModelConfig(BaseModel):
             "naive_prior",
             "seasonal_naive",
             "elastic_net",
+            "gradient_boosting",
             "hist_gradient_boosting",
             "xgboost",
         ]
@@ -114,6 +115,15 @@ class ModelConfig(BaseModel):
             "subsample": 0.9,
             "colsample_bytree": 0.9,
             "reg_lambda": 1.0,
+        }
+    )
+    # Classic sklearn GradientBoostingRegressor (the reference default model).
+    gbr_params: dict[str, float | int | str] = Field(
+        default_factory=lambda: {
+            "n_estimators": 300,
+            "max_depth": 3,
+            "learning_rate": 0.05,
+            "subsample": 0.9,
         }
     )
     hgb_params: dict[str, float | int | str] = Field(

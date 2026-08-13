@@ -12,7 +12,7 @@ JSON is workspace-specific and is not committed with real identifiers).
    read inputs, load the registered/exported model, and write predictions to
    `Files/revenue/predictions/`.
 3. **(Optional) Notebook: drift check** — compute PSI on key features and the
-   prediction, using `revenue_prediction.monitoring`, and record results.
+   prediction, using `revenue_prediction.ops.monitoring`, and record results.
 4. **Refresh semantic model** — trigger a DirectLake semantic model refresh so
    the Power BI report reflects new predictions.
 

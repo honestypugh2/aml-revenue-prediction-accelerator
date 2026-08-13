@@ -6,8 +6,8 @@ import pandas as pd
 import pytest
 
 from revenue_prediction.config.models import DataConfig
-from revenue_prediction.data.schema import ALL_COLUMNS, FACILITY_COL, MONTH_COL, TARGET
-from revenue_prediction.data.synthetic import generate_synthetic_dataset
+from revenue_prediction.core.data.schema import ALL_COLUMNS, FACILITY_COL, MONTH_COL, TARGET
+from revenue_prediction.core.data.synthetic import generate_synthetic_dataset
 
 pytestmark = pytest.mark.unit
 

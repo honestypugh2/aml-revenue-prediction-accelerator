@@ -7,7 +7,7 @@ attention or retraining, and prepare for Azure ML managed model monitoring.
 
 ## Offline drift metrics (included)
 
-`revenue_prediction.monitoring` provides:
+`revenue_prediction.ops.monitoring` provides:
 
 - `population_stability_index(expected, actual, bins=10)` — PSI for a numeric
   distribution. Interpretation: `< 0.1` negligible, `0.1–0.25` moderate,

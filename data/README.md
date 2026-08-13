@@ -30,7 +30,7 @@ facility-month has multiple intra-month snapshots (default days 7, 10, 12, 15,
 
 ## Provenance & generation assumptions
 
-The dataset is produced by `revenue_prediction.data.synthetic` with a fixed seed
+The dataset is produced by `revenue_prediction.core.data.synthetic` with a fixed seed
 for reproducibility. It models — synthetically — seasonality, facility effects,
 service-line and payer-mix effects, payment lag, denial and adjustment patterns,
 missing values, outliers, and controlled noise. The "actual" month-end net
@@ -55,7 +55,7 @@ adjustments, denials, bad debt, and charity care. See
   `snapshot_date`.
 - Historical features use only strictly-prior closed months.
 
-These rules are enforced by `revenue_prediction.data.contracts` and covered by
+These rules are enforced by `revenue_prediction.core.data.contracts` and covered by
 tests in `tests/contract`.
 
 ## Data dictionary

@@ -24,11 +24,11 @@ flowchart LR
 - **Promotion rule:** a challenger is *promotable* only if it beats the incumbent
   by more than `evaluation.challenger_improvement_threshold` (default 2%). This
   prevents promotion on noise. Implemented in
-  `revenue_prediction.evaluation.select_champion_challenger`.
+  `revenue_prediction.core.evaluation.select_champion_challenger`.
 
 ## Registration
 
-`revenue_prediction.azureml.register_model_from_run` registers the MLflow model
+`revenue_prediction.integrations.azureml.register_model_from_run` registers the MLflow model
 produced by a training job under `azure_ml.registered_model_name`. Registration
 captures lineage (job/run), enabling reproducibility and rollback.
 

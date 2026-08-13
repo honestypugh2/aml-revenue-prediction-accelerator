@@ -8,8 +8,8 @@ import pandas as pd
 import pytest
 
 from revenue_prediction.config.loader import load_settings
-from revenue_prediction.data.io import materialise_default_datasets, read_dataset
-from revenue_prediction.inference.predict import batch_predict, load_bundle
+from revenue_prediction.core.data.io import materialise_default_datasets, read_dataset
+from revenue_prediction.core.inference.predict import batch_predict, load_bundle
 from revenue_prediction.pipelines.local_pipeline import run_local_pipeline
 
 pytestmark = pytest.mark.smoke
@@ -27,7 +27,7 @@ def test_full_pipeline_selects_champion_and_scores(tmp_path: Path) -> None:
     assert output.bundle_path is not None and output.bundle_path.exists()
     bundle = load_bundle(output.bundle_path)
 
-    from revenue_prediction.data.synthetic import generate_synthetic_dataset
+    from revenue_prediction.core.data.synthetic import generate_synthetic_dataset
 
     frame = generate_synthetic_dataset(settings.data)
     predictions = batch_predict(bundle, frame, cutoff_day=15)
@@ -59,7 +59,7 @@ def test_reasonable_accuracy_on_dev_config(tmp_path: Path) -> None:
 
 
 def test_onelake_local_fallback(tmp_path: Path) -> None:
-    from revenue_prediction.fabric.onelake import write_predictions_to_onelake
+    from revenue_prediction.integrations.fabric.onelake import write_predictions_to_onelake
 
     settings = load_settings("test")
     df = pd.DataFrame({"facility_id": ["FAC-001"], "predicted_month_end_net_revenue": [1.0]})

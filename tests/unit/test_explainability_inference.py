@@ -7,20 +7,20 @@ from pathlib import Path
 import pytest
 
 from revenue_prediction.config.loader import load_settings
-from revenue_prediction.data.schema import FEATURE_COLUMNS, TARGET
-from revenue_prediction.data.synthetic import generate_synthetic_dataset
-from revenue_prediction.evaluation.explainability import (
+from revenue_prediction.core.data.schema import FEATURE_COLUMNS, TARGET
+from revenue_prediction.core.data.synthetic import generate_synthetic_dataset
+from revenue_prediction.core.evaluation.explainability import (
     native_feature_importance,
     permutation_feature_importance,
 )
-from revenue_prediction.inference.predict import (
+from revenue_prediction.core.inference.predict import (
     ModelBundle,
     batch_predict,
     load_bundle,
     save_bundle,
 )
-from revenue_prediction.training.splitting import blocked_temporal_split
-from revenue_prediction.training.train import train_candidate
+from revenue_prediction.core.training.splitting import blocked_temporal_split
+from revenue_prediction.core.training.train import train_candidate
 
 pytestmark = pytest.mark.unit
 

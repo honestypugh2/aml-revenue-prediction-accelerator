@@ -12,13 +12,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..config.models import Settings
-from ..data.contracts import validate_leakage_rules, validate_raw_snapshots
-from ..data.synthetic import generate_synthetic_dataset
-from ..evaluation.selection import Selection, select_champion_challenger
-from ..inference.predict import ModelBundle, save_bundle
-from ..training.splitting import blocked_temporal_split
-from ..training.train import TrainingResult, train_all_candidates
+from revenue_prediction.config.models import Settings
+from revenue_prediction.core.data.contracts import validate_leakage_rules, validate_raw_snapshots
+from revenue_prediction.core.data.synthetic import generate_synthetic_dataset
+from revenue_prediction.core.evaluation.selection import Selection, select_champion_challenger
+from revenue_prediction.core.inference.predict import ModelBundle, save_bundle
+from revenue_prediction.core.training.splitting import blocked_temporal_split
+from revenue_prediction.core.training.train import TrainingResult, train_all_candidates
 
 
 @dataclass

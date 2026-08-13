@@ -5,12 +5,12 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from revenue_prediction.data.contracts import (
+from revenue_prediction.core.data.contracts import (
     ContractViolation,
     validate_leakage_rules,
     validate_raw_snapshots,
 )
-from revenue_prediction.data.io import build_invalid_sample
+from revenue_prediction.core.data.io import build_invalid_sample
 
 pytestmark = pytest.mark.contract
 

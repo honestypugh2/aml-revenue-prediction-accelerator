@@ -6,8 +6,8 @@ The accelerator reads snapshot inputs from and writes predictions to a Microsoft
 Fabric **Lakehouse** via **OneLake**. OneLake exposes an ADLS Gen2-compatible
 endpoint, so we use `azure-storage-file-datalake` with `DefaultAzureCredential`.
 
-- Client: `revenue_prediction.fabric.OneLakeClient`
-- Writer: `revenue_prediction.fabric.write_predictions_to_onelake`
+- Client: `revenue_prediction.integrations.fabric.OneLakeClient`
+- Writer: `revenue_prediction.integrations.fabric.write_predictions_to_onelake`
 
 All identifiers are placeholders (`WORKSPACE_PLACEHOLDER`,
 `LAKEHOUSE_PLACEHOLDER`) until supplied via environment variables.

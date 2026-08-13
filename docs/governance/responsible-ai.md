@@ -22,14 +22,24 @@ the model informs, it does not decide.
 
 Accuracy is reported **by facility** and **by snapshot day**, not just in
 aggregate, so that systematically worse performance for particular facilities or
-early-in-month snapshots is visible and can be addressed.
+early-in-month snapshots is visible and can be addressed. This is the
+regression-appropriate form of a fairness assessment: compare error across the
+groups that matter (facilities, checkpoints).
+
+- For production, wire this into the Azure ML **Responsible AI dashboard**
+  (error analysis + fairness) and, where a formal fairness metric is needed, the
+  **Fairlearn** toolkit. See *Machine learning fairness - Azure Machine
+  Learning*.
 
 ## Transparency and explainability
 
 - Model comparison is published (all candidates, all metrics).
-- Global explanations use permutation and native feature importances
-  (`revenue_prediction.evaluation.explainability`); AutoML runs with model
-  explainability enabled.
+- Global explanations use permutation and native feature importances, and
+  optional **SHAP** (`revenue_prediction.core.evaluation.explainability.shap_summary`,
+  `uv sync --extra explain`); AutoML runs with model explainability enabled.
+- In production, generate interpretability and error analysis with the Azure ML
+  **Responsible AI dashboard** components (see *Model interpretability - Azure
+  Machine Learning*).
 - Every prediction is self-describing: model name/version, run id, cutoff day,
   and scoring timestamp travel with the output.
 

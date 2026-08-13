@@ -67,7 +67,7 @@ here beyond normal dependency usage.
 ## 5. Datasets
 
 The default dataset is **generated synthetically** by
-`revenue_prediction.data.synthetic` and is original to this project. No
+`revenue_prediction.core.data.synthetic` and is original to this project. No
 third-party dataset is redistributed. Dataset references listed in the project
 brief were reviewed for domain understanding only; none were copied or
 redistributed. See `data/README.md` for provenance and `docs/modeling/` for the

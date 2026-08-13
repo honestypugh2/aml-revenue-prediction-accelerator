@@ -24,8 +24,7 @@ export function KnowledgeChecks() {
     <section>
       <h1>Knowledge checks</h1>
       <p className="lede">
-        Answers are graded on the server — the correct option is never sent to the browser until you
-        submit. Aim for 4 / 5 or better.
+        Test your understanding with server-graded questions. Aim for 4 / 5 or better.
       </p>
 
       {isLoading && <p className="muted">Loading questions…</p>}

@@ -34,6 +34,8 @@ dependencies = [
     "pyyaml>=6.0",
     "python-dateutil>=2.9",
     "polars>=1.43.0",
+    "azure-ai-ml>=1.34.1",
+    "azure-identity>=1.25.3",
 ]
 
 [project.optional-dependencies]
@@ -54,6 +56,16 @@ fabric = [
 api = [
     "fastapi>=0.115,<1.0",
     "uvicorn[standard]>=0.30,<1.0",
+]
+# SHAP explainability (educational UI, code-first, and offline analysis).
+explain = [
+    "shap>=0.44",
+]
+# ONNX model optimization / portable inference.
+onnx = [
+    "skl2onnx>=1.16",
+    "onnx>=1.16",
+    "onnxruntime>=1.18",
 ]
 # Notebook execution.
 notebooks = [
@@ -80,7 +92,7 @@ dev = [
 ]
 
 [project.scripts]
-revenue-prediction = "revenue_prediction.cli.main:app"
+revenue-prediction = "revenue_prediction.interfaces.cli.main:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -107,7 +119,7 @@ ignore = ["N803", "N806", "E501", "N818"]
 
 [tool.ruff.lint.per-file-ignores]
 # B008: Typer uses function calls (Option/Argument) in defaults by design.
-"src/revenue_prediction/cli/**" = ["B008"]
+"src/revenue_prediction/interfaces/cli/**" = ["B008"]
 "tests/**" = ["N802", "N803", "N806"]
 "notebooks/**" = ["E402", "F401"]
 

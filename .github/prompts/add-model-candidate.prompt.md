@@ -9,7 +9,7 @@ Add a new regression candidate named `${input:name}` to the accelerator.
 
 Steps:
 
-1. In `src/revenue_prediction/models/factory.py`, add a branch in
+1. In `src/revenue_prediction/core/models/factory.py`, add a branch in
    `build_estimator` returning the new estimator, and include it in
    `supported_models()`. If it consumes raw historical columns (like a
    baseline), also add it to `BASELINE_MODELS`.

@@ -14,4 +14,6 @@ terraform {
 
 provider "azurerm" {
   features {}
+  # Storage in this profile is keyless; use Entra ID for data-plane operations.
+  storage_use_azuread = true
 }

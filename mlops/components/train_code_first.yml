@@ -25,7 +25,7 @@ outputs:
 code: ../../src
 environment: azureml:revenue-prediction-env@latest
 command: >-
-  python -m revenue_prediction.training.azureml_entry
+  python -m revenue_prediction.core.training.azureml_entry
   --data ${{inputs.training_data}}
   --env ${{inputs.environment_name}}
   --output ${{outputs.model_dir}}

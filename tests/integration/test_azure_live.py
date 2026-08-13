@@ -28,7 +28,7 @@ skip_reason = "Set RPA_RUN_LIVE=1 and provide real workspace config to run live 
 
 @pytest.mark.skipif(not _RUN_LIVE, reason=skip_reason)
 def test_ml_client_connects() -> None:
-    from revenue_prediction.azureml.client import get_ml_client
+    from revenue_prediction.integrations.azureml.client import get_ml_client
 
     settings = load_settings(os.environ.get("RPA_ENVIRONMENT", "dev"))
     if not settings.azure_ml.is_configured():
@@ -43,7 +43,7 @@ def test_ml_client_connects() -> None:
 def test_onelake_write_read_roundtrip() -> None:
     import pandas as pd
 
-    from revenue_prediction.fabric.onelake import OneLakeClient
+    from revenue_prediction.integrations.fabric.onelake import OneLakeClient
 
     settings = load_settings(os.environ.get("RPA_ENVIRONMENT", "dev"))
     if not settings.fabric.is_configured():

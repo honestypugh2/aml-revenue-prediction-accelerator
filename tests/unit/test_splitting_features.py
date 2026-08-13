@@ -7,9 +7,9 @@ import pandas as pd
 import pytest
 
 from revenue_prediction.config.models import FeatureConfig, SplitConfig
-from revenue_prediction.data.schema import MONTH_COL
-from revenue_prediction.features.engineering import LeakageSafeFeatureBuilder
-from revenue_prediction.training.splitting import (
+from revenue_prediction.core.data.schema import MONTH_COL
+from revenue_prediction.core.features.engineering import LeakageSafeFeatureBuilder
+from revenue_prediction.core.training.splitting import (
     blocked_temporal_split,
     expanding_window_folds,
     rolling_origin_folds,
@@ -57,7 +57,7 @@ def test_feature_builder_rejects_forbidden_columns(dataset: pd.DataFrame) -> Non
 
 
 def test_feature_builder_no_nans_and_medians_from_train_only() -> None:
-    from revenue_prediction.data.schema import FEATURE_COLUMNS
+    from revenue_prediction.core.data.schema import FEATURE_COLUMNS
 
     df = pd.DataFrame(
         {

@@ -7,7 +7,7 @@ import pytest
 
 from revenue_prediction.config.loader import load_settings
 from revenue_prediction.config.models import Settings
-from revenue_prediction.data.synthetic import generate_synthetic_dataset
+from revenue_prediction.core.data.synthetic import generate_synthetic_dataset
 
 
 @pytest.fixture(scope="session")

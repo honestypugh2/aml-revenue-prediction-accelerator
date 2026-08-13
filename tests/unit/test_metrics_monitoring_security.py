@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from revenue_prediction.evaluation.metrics import (
+from revenue_prediction.core.evaluation.metrics import (
     bias,
     compute_metrics,
     metrics_by_snapshot_day,
     smape,
     wape,
 )
-from revenue_prediction.monitoring.drift import (
+from revenue_prediction.ops.monitoring.drift import (
     population_stability_index,
     prediction_drift_report,
 )

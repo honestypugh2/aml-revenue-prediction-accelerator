@@ -82,7 +82,7 @@ No Azure or Fabric credentials are required for the offline path. Cloud steps
 
 | Path | Purpose |
 | --- | --- |
-| [`src/revenue_prediction/`](src/revenue_prediction/) | Core Python package (incl. FastAPI backend under `api/`) |
+| [`src/revenue_prediction/`](src/revenue_prediction/) | Core Python package, grouped into `core/`, `integrations/`, `interfaces/` (FastAPI backend under `interfaces/api/`) |
 | [`frontend/`](frontend/) | React + TypeScript educational UI (Vite) |
 | [`configs/`](configs/) | Layered base/dev/test/prod configuration |
 | [`data/`](data/) | Synthetic data, contracts, dictionary, provenance |
@@ -95,13 +95,19 @@ No Azure or Fabric credentials are required for the offline path. Cloud steps
 
 ## Documentation index
 
+- **Docs home / table of contents**: [`docs/README.md`](docs/README.md)
+- **Full end-to-end demo script** (Azure ML talking track): [`docs/demo/end-to-end-demo-script.md`](docs/demo/end-to-end-demo-script.md)
 - Architecture & decisions: [`docs/architecture/`](docs/architecture/)
-- Modeling strategy: [`docs/modeling/`](docs/modeling/)
+- **End-to-end patterns** (AutoML UI/SDK, code-first UI/SDK): [`docs/patterns/`](docs/patterns/end-to-end-patterns.md)
+- **MLOps v2 mapping**: [`docs/architecture/mlops-v2.md`](docs/architecture/mlops-v2.md)
+- **Repository structure** review: [`docs/architecture/repository-structure.md`](docs/architecture/repository-structure.md)
+- Modeling strategy & AutoML: [`docs/modeling/`](docs/modeling/)
 - Fabric & OneLake: [`docs/fabric/`](docs/fabric/)
 - Security & networking: [`docs/security/`](docs/security/)
 - Deployment: [`docs/deployment/`](docs/deployment/)
 - Governance & responsible AI: [`docs/governance/`](docs/governance/)
 - Operations, monitoring, retraining: [`docs/operations/`](docs/operations/)
+- Inference in production (runbook): [`docs/operations/inference-in-production.md`](docs/operations/inference-in-production.md)
 - Education & workshops: [`docs/education/`](docs/education/), [`docs/workshops/`](docs/workshops/)
 
 ## Safety, neutrality, and licensing

@@ -43,18 +43,22 @@ snippets are in [`notebooks/code_first/`](../../notebooks/code_first/) and
 
 ## 3. Submit training
 
-- **Code-first:** `revenue_prediction.azureml.build_command_job(...)` then
+- **Code-first:** `revenue_prediction.integrations.azureml.build_command_job(...)` then
   `ml_client.jobs.create_or_update(job)`.
-- **AutoML:** `revenue_prediction.automl.build_regression_job(spec)` then submit.
+- **AutoML:** `revenue_prediction.integrations.automl.build_regression_job(spec)` then submit.
 
 Both log to MLflow (Azure ML tracking).
 
 ## 4. Register the champion
 
-`revenue_prediction.azureml.register_model_from_run(...)` registers the MLflow
+`revenue_prediction.integrations.azureml.register_model_from_run(...)` registers the MLflow
 model produced by the run under `azure_ml.registered_model_name`.
 
 ## 5. Inference
+
+> For the full production inference runbook — how the trained champion scores
+> partial-month snapshots at each checkpoint, mapped to the Build & Learn UI —
+> see [`docs/operations/inference-in-production.md`](../operations/inference-in-production.md).
 
 - **Batch:** `revenue-prediction predict <bundle> <data>` locally, or an Azure ML
   batch endpoint/job in the cloud; write predictions to OneLake with

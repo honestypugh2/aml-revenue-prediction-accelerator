@@ -36,5 +36,5 @@ USER appuser
 EXPOSE 8000
 
 # Default: serve the API + built React UI. Override CMD to run the CLI instead.
-CMD ["uv", "run", "uvicorn", "revenue_prediction.api.app:app", \
+CMD ["uv", "run", "uvicorn", "revenue_prediction.interfaces.api.app:app", \
      "--host", "0.0.0.0", "--port", "8000"]

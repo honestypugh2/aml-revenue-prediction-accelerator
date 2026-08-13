@@ -4,11 +4,18 @@ from __future__ import annotations
 
 import pytest
 
-from revenue_prediction.automl import build_automl_job_spec
 from revenue_prediction.config.loader import load_settings
 from revenue_prediction.config.models import AutoMLConfig, AzureMLConfig
-from revenue_prediction.data.schema import TARGET
-from revenue_prediction.education import get_knowledge_checks, get_lessons, grade_answer
+from revenue_prediction.core.data.schema import TARGET
+from revenue_prediction.education import (
+    get_knowledge_checks,
+    get_lessons,
+    get_metric_targets,
+    get_readiness_dimensions,
+    get_success_criteria,
+    grade_answer,
+)
+from revenue_prediction.integrations.automl import build_automl_job_spec
 
 pytestmark = pytest.mark.unit
 
@@ -54,3 +61,23 @@ def test_education_content_is_consistent() -> None:
     for check in checks:
         assert 0 <= check.correct_index < len(check.options)
         assert grade_answer(check, check.correct_index) is True
+
+    keys = [c.key for c in checks]
+    assert len(keys) == len(set(keys))  # keys must be unique
+    # Simulator-tied checks reinforce leakage safety and lineage.
+    assert {"leakage_gate", "lineage", "inference_target"}.issubset(keys)
+
+
+def test_success_criteria_and_readiness_content() -> None:
+    targets = get_metric_targets()
+    criteria = get_success_criteria()
+    assert targets and criteria
+    assert any("Day 15" in t.checkpoint for t in targets)
+    assert {c.category for c in criteria} == {"Business KPI", "Adoption gate"}
+
+    dims = get_readiness_dimensions()
+    keys = [d.key for d in dims]
+    assert len(keys) == len(set(keys))
+    assert all(d.default_rating in {"green", "amber", "red"} for d in dims)
+    # Target, point-in-time, and label availability are structural gates.
+    assert {"target", "as_of", "labels"}.issubset({d.key for d in dims if d.is_gate})

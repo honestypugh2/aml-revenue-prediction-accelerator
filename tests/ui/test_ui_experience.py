@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from revenue_prediction.ui.experience import (
+from revenue_prediction.interfaces.ui.experience import (
     build_comparison_view,
     build_dataset_overview,
     facility_month_series,

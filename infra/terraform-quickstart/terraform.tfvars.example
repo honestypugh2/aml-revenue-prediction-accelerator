@@ -9,3 +9,10 @@ tags = {
   environment = "dev"
   profile     = "quickstart"
 }
+
+# Compute (optional overrides)
+create_compute_instance  = true
+compute_instance_vm_size = "Standard_DS3_v2"
+compute_cluster_vm_size  = "Standard_DS3_v2"
+compute_cluster_max_nodes = 2
+# assign_current_user_storage_roles = true

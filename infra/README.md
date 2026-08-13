@@ -62,3 +62,10 @@ See [`docs/security/networking.md`](../docs/security/networking.md) for RBAC and
 the critical storage role assignments required for job submission, and
 [`docs/operations/cost-and-cleanup.md`](../docs/operations/cost-and-cleanup.md)
 to control cost.
+
+> The **Terraform quickstart** provisions a compute cluster (scale-to-zero), a
+> personal compute instance, an identity-based (keyless) default datastore with
+> RBAC data-role assignments for the workspace/compute identities, and everything
+> needed for a one-command, end-to-end learning environment. The Bicep quickstart
+> and the secure profiles leave compute and (for Bicep) some role assignments as
+> documented day-2 steps.

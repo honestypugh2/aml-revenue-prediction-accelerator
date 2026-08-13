@@ -8,11 +8,25 @@ export function Callout({
   kind = "info",
   title,
   children,
+  collapsible = false,
 }: {
   kind?: CalloutKind;
   title: string;
   children: ReactNode;
+  collapsible?: boolean;
 }) {
+  if (collapsible) {
+    return (
+      <details className={`callout callout--${kind} callout--collapsible`}>
+        <summary className="callout__summary">
+          <span className="callout__title">{title}</span>
+          <span className="callout__hint">Details</span>
+        </summary>
+        <div className="callout__body">{children}</div>
+      </details>
+    );
+  }
+
   return (
     <div className={`callout callout--${kind}`} role="note">
       <div className="callout__title">{title}</div>

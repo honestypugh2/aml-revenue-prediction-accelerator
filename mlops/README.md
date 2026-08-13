@@ -7,10 +7,16 @@ target your own workspace; nothing here runs automatically. Synthetic data only.
 | --- | --- |
 | `environments/` | Conda spec + AML environment definition |
 | `components/` | Code-first training command component |
-| `pipelines/` | Training pipeline job |
+| `pipelines/` | Training pipeline: YAML (`training-pipeline.yml`) **and** Python SDK v2 DSL (`azureml_pipeline.py`) |
 | `endpoints/` | Batch (default) and optional online endpoints/deployments |
 | `monitoring/` | Model monitoring schedule (drift + data quality) |
 | `schemas/` | Inference request/response JSON schema |
+
+> **Endpoints:** batch is recommended for this use case; see the recommendation
+> in [`docs/operations/inference-in-production.md`](../docs/operations/inference-in-production.md).
+> For deployment images, prefer Azure ML **prebuilt inference images** (they can
+> include ONNX Runtime) — see [`docs/operations/onnx-optimization.md`](../docs/operations/onnx-optimization.md).
+> The four authoring patterns are documented in [`docs/patterns/`](../docs/patterns/end-to-end-patterns.md).
 
 ## Typical flow
 
@@ -36,7 +42,7 @@ az ml online-deployment create -f mlops/endpoints/online-deployment.yml -g <rg> 
 
 ## AutoML
 
-AutoML jobs are built in code via `revenue_prediction.automl` (see
+AutoML jobs are built in code via `revenue_prediction.integrations.automl` (see
 [`notebooks/automl/`](../notebooks/automl/)). They use the same environment and
 compute.
 

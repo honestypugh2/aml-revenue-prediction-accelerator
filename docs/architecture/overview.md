@@ -32,21 +32,22 @@ flowchart TD
 | Layer | Package | Responsibility |
 | --- | --- | --- |
 | Configuration | `config` | Layered base/dev/test/prod, env-var overrides, no secrets |
-| Data | `data` | Synthetic generation, schema, contracts, leakage rules, IO |
-| Features | `features` | Leakage-safe, fit-on-train-only transformer |
-| Splitting | `training.splitting` | Time-aware splits and backtest folds |
-| Models | `models` | Baselines + regressors + factory |
-| Training | `training` | Orchestration + Azure ML entry point |
-| AutoML | `automl` | Azure ML SDK v2 AutoML regression |
-| Azure ML | `azureml` | Workspace client, command jobs, registration |
-| Evaluation | `evaluation` | Metrics, grouped accuracy, selection, explainability |
-| Inference | `inference` | Model bundle, batch scoring, uncertainty |
-| Fabric | `fabric` | OneLake read/write with local fallback |
-| Monitoring | `monitoring` | PSI / drift preparation |
+| Data | `core.data` | Synthetic generation, schema, contracts, leakage rules, IO |
+| Features | `core.features` | Leakage-safe, fit-on-train-only transformer |
+| Splitting | `core.training.splitting` | Time-aware splits and backtest folds |
+| Models | `core.models` | Baselines + regressors + factory |
+| Training | `core.training` | Orchestration + Azure ML entry point |
+| Evaluation | `core.evaluation` | Metrics, grouped accuracy, selection, explainability |
+| Inference | `core.inference` | Model bundle, batch scoring, uncertainty |
+| AutoML | `integrations.automl` | Azure ML SDK v2 AutoML regression |
+| Azure ML | `integrations.azureml` | Workspace client, command jobs, registration |
+| Fabric | `integrations.fabric` | OneLake read/write with local fallback |
+| Monitoring | `ops.monitoring` | PSI / drift preparation |
 | Security | `security` | Redaction, neutrality scanning |
 | Education | `education` | Original lessons and knowledge checks |
-| UI logic | `ui` | Framework-agnostic experience helpers (pure, testable) |
-| API | `api` | FastAPI backend serving the React UI over the core |
+| UI logic | `interfaces.ui` | Framework-agnostic experience helpers (pure, testable) |
+| API | `interfaces.api` | FastAPI backend serving the React UI over the core |
+| CLI | `interfaces.cli` | Typer command-line entry point |
 | Pipelines | `pipelines` | Offline end-to-end orchestration |
 
 ## Environments
@@ -54,6 +55,14 @@ flowchart TD
 `dev`, `test`, and `prod` configuration profiles support progression from local
 development through governed promotion. See
 [`docs/deployment/`](../deployment/) and [`docs/governance/`](../governance/).
+
+## End-to-end patterns & MLOps v2
+
+The accelerator demonstrates four authoring patterns — Automated ML (UI & SDK)
+and code-first Azure ML (UI & SDK) — all following the classical-ML **MLOps v2**
+reference architecture and deployable to a secure managed-VNet workspace. See
+[`docs/patterns/end-to-end-patterns.md`](../patterns/end-to-end-patterns.md) and
+[`docs/architecture/mlops-v2.md`](mlops-v2.md).
 
 ## Security posture
 

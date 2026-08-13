@@ -23,11 +23,14 @@ Optional integrations live under `[project.optional-dependencies]`:
 | `azure` | `azure-ai-ml`, `azure-identity`, `azureml-mlflow`, `mltable` |
 | `fabric` | `azure-storage-file-datalake`, `azure-identity` (OneLake) |
 | `api` | `fastapi`, `uvicorn[standard]` (backend for the React UI) |
+| `explain` | `shap` (SHAP explainability for UI / code-first / offline) |
+| `onnx` | `skl2onnx`, `onnx`, `onnxruntime` (portable/optimized inference) |
 | `notebooks` | `jupyter`, `ipykernel`, `nbformat` |
 | `foundry` | `azure-ai-projects` (optional Azure AI Foundry) |
 
 Dev tooling is a PEP 735 `[dependency-groups]` (`dev`), installed by default by
-`uv`.
+`uv`. All optional integrations keep their imports **guarded**, so the core
+package imports offline without any extra installed.
 
 ## No Azure ML SDK v1
 

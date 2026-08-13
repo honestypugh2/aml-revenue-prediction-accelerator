@@ -11,7 +11,7 @@ pytest.importorskip("httpx")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from revenue_prediction.api.app import app  # noqa: E402
+from revenue_prediction.interfaces.api.app import app  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -66,6 +66,15 @@ def test_education_lessons_and_notes(client: TestClient) -> None:
     assert notes and all(n["area"] == "training" for n in notes)
 
 
+def test_success_criteria_and_readiness_endpoints(client: TestClient) -> None:
+    sc = client.get("/api/education/success-criteria").json()
+    assert sc["headline"] and sc["metric_targets"] and sc["criteria"]
+    dims = client.get("/api/education/data-readiness").json()
+    assert len(dims) >= 5
+    assert any(d["is_gate"] for d in dims)
+    assert all(d["default_rating"] in {"green", "amber", "red"} for d in dims)
+
+
 def test_knowledge_checks_do_not_leak_answers(client: TestClient) -> None:
     checks = client.get("/api/education/knowledge-checks").json()
     assert checks
@@ -88,3 +97,85 @@ def test_grade_endpoint(client: TestClient) -> None:
         ).status_code
         == 404
     )
+
+
+def test_walkthrough_is_ordered(client: TestClient) -> None:
+    steps = client.get("/api/education/walkthrough").json()
+    assert len(steps) >= 10
+    numbers = [s["number"] for s in steps]
+    assert numbers == sorted(numbers)
+    assert steps[0]["phase"] == "Frame"
+    assert all(s["action"] for s in steps)
+
+
+def test_pipeline_leakage(client: TestClient) -> None:
+    body = client.get("/api/pipeline/leakage", params={"env": "test"}).json()
+    assert "actual_month_end_net_revenue" in body["forbidden_columns"]
+    assert len(body["rules"]) >= 3
+
+
+def test_pipeline_target_ratio_above_one(client: TestClient) -> None:
+    body = client.get("/api/pipeline/target", params={"env": "test"}).json()
+    assert body["items"]
+    assert body["average_gross_to_net_ratio"] > 1.0
+
+
+def test_pipeline_split_is_temporal(client: TestClient) -> None:
+    body = client.get("/api/pipeline/split", params={"env": "test"}).json()
+    assert body["train_months"] and body["test_months"]
+    assert max(body["train_months"]) < min(body["test_months"])
+
+
+def test_pipeline_features_expands_columns(client: TestClient) -> None:
+    body = client.get("/api/pipeline/features", params={"env": "test"}).json()
+    assert body["n_engineered"] >= body["n_raw"]
+    assert set(body["example"]).issubset(set(body["engineered_features"]))
+
+
+def test_pipeline_explain_returns_drivers(client: TestClient) -> None:
+    body = client.get("/api/pipeline/explain", params={"env": "test", "top": 8}).json()
+    assert body["model"]
+    assert 1 <= len(body["items"]) <= 8
+    assert all("feature" in i and "importance" in i for i in body["items"])
+
+
+def test_pipeline_predict_scores_checkpoint(client: TestClient) -> None:
+    body = client.get(
+        "/api/pipeline/predict", params={"env": "test", "cutoff_day": 15, "limit": 5}
+    ).json()
+    assert body["cutoff_day"] == 15
+    assert body["model_name"] and body["model_version"] and body["run_id"]
+    assert body["scored_at"]
+    assert 1 <= len(body["rows"]) <= 5
+    row = body["rows"][0]
+    assert row["predicted_month_end_net_revenue"] > 0
+    # actuals are joined for teaching; every scored row is at the cutoff day
+    assert all(r["snapshot_day"] == 15 for r in body["rows"])
+
+
+def test_pipeline_cleaning(client: TestClient) -> None:
+    body = client.get("/api/pipeline/cleaning", params={"env": "test"}).json()
+    assert body["rows"] > 0
+    assert body["outlier_note"]
+    for c in body["columns_with_missing"]:
+        assert c["missing_count"] > 0
+        assert "median" in c["strategy"]
+
+
+def test_pipeline_eda(client: TestClient) -> None:
+    body = client.get("/api/pipeline/eda", params={"env": "test", "top": 8}).json()
+    assert body["target"] == "actual_month_end_net_revenue"
+    assert 1 <= len(body["correlations"]) <= 8
+    assert all(-1.0 <= c["corr_with_target"] <= 1.0 for c in body["correlations"])
+    assert body["skewness"]
+
+
+def test_pipeline_optimize(client: TestClient) -> None:
+    body = client.get("/api/pipeline/optimize", params={"env": "test"}).json()
+    assert body["hyperparameter"] == "learning_rate"
+    assert len(body["trials"]) >= 2
+    best = [t for t in body["trials"] if t["is_best"]]
+    assert len(best) == 1
+    assert best[0]["setting"] == body["best_setting"]
+    # the flagged best trial has the minimum WAPE
+    assert best[0]["wape"] == min(t["wape"] for t in body["trials"])

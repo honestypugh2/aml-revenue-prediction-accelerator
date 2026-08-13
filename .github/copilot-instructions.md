@@ -14,7 +14,7 @@ accelerator for predicting healthcare facility **month-end net revenue** from
   Lakehouse IDs). Use placeholders: `FAC-001`, `WORKSPACE_PLACEHOLDER`,
   `LAKEHOUSE_PLACEHOLDER`.
 - **Synthetic data only.** All default data comes from
-  `revenue_prediction.data.synthetic`.
+  `revenue_prediction.core.data.synthetic`.
 - **No Azure ML SDK v1.** Use `azure-ai-ml` (SDK v2) exclusively.
 - **Leakage safety.** A feature for a snapshot must never use information from
   after its `snapshot_date`. Preserve time-aware splitting (never random row
@@ -39,7 +39,7 @@ accelerator for predicting healthcare facility **month-end net revenue** from
 ## Where things live
 
 - Core package: `src/revenue_prediction/` (see `docs/architecture/overview.md`).
-- Data contracts: `src/revenue_prediction/data/`, `data/contracts/`.
+- Data contracts: `src/revenue_prediction/core/data/`, `data/contracts/`.
 - Infra: `infra/` (Bicep validated; Terraform validated in CI).
 - MLOps assets: `mlops/`. Notebooks: `notebooks/`, `fabric/`.
 

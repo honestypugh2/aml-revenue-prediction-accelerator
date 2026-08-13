@@ -30,6 +30,7 @@ model:
     - naive_prior
     - seasonal_naive
     - elastic_net
+    - gradient_boosting
     - hist_gradient_boosting
     - xgboost
   primary_metric: wape

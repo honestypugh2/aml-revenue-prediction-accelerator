@@ -1,7 +1,7 @@
 # Data contract
 
 This contract defines what a **valid** facility-month-snapshot dataset must
-satisfy. It is enforced in code by `revenue_prediction.data.contracts`
+satisfy. It is enforced in code by `revenue_prediction.core.data.contracts`
 (Pandera schema + leakage rules) and covered by `tests/contract`.
 
 ## Producer / consumer

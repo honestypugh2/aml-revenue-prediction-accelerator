@@ -19,9 +19,8 @@ export function Overview() {
     <section>
       <h1>Dataset overview</h1>
       <p className="lede">
-        Every row is one <strong>facility · accounting month · snapshot</strong>. The target,
-        month-end net revenue, is known only after close — so we estimate it early from
-        within-month signal.
+        Inspect the <strong>facility · accounting month · snapshot</strong> grain used to estimate
+        month-end net revenue before close.
       </p>
 
       <Callout kind="warn" title="Synthetic data">

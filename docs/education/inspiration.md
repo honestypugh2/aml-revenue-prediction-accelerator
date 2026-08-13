@@ -47,6 +47,6 @@ model governance.
 - Content: [`src/revenue_prediction/education/`](../../src/revenue_prediction/education/)
   (original lessons, knowledge checks, and the pervasive contextual-note layer).
 - Interactive UI: [`frontend/`](../../frontend/) (original React + TypeScript app)
-  backed by [`src/revenue_prediction/api/`](../../src/revenue_prediction/api/)
+  backed by [`src/revenue_prediction/interfaces/api/`](../../src/revenue_prediction/interfaces/api/)
   (FastAPI).
 - Workshop materials: [`docs/workshops/`](../workshops/).

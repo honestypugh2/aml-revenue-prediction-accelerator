@@ -7,8 +7,7 @@ export function Learn() {
     <section>
       <h1>Learn</h1>
       <p className="lede">
-        Original, repository-grounded lessons on the accelerator’s engineering practices. Explore in
-        any order; each links to deeper docs.
+        Explore repository-grounded lessons in any order, with links to deeper documentation.
       </p>
 
       {isLoading && <p className="muted">Loading lessons…</p>}
