@@ -26,6 +26,18 @@ _MERMAID_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 _MD_LINK_RE = re.compile(r"\]\((?!https?://|#|mailto:)([^)]+?)\)")
 
 
+def _github_slugify(value: str, separator: str = "-") -> str:
+    """Slugify headings the way GitHub does so anchors match the source repo.
+
+    Unlike Markdown's default, spaces are replaced individually (not collapsed),
+    so a heading like "Build & Learn app - start & stop" yields the same anchor
+    GitHub generates.
+    """
+    value = value.strip().lower()
+    value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
+    return value.replace(" ", separator)
+
+
 @dataclass(frozen=True)
 class Page:
     src: Path  # absolute source markdown path
@@ -164,7 +176,10 @@ def build(out_dir: Path) -> int:
     pages = _discover_pages()
     md = markdown.Markdown(
         extensions=["tables", "fenced_code", "toc", "sane_lists", "attr_list", "codehilite"],
-        extension_configs={"codehilite": {"noclasses": True, "pygments_style": "friendly"}},
+        extension_configs={
+            "codehilite": {"noclasses": True, "pygments_style": "friendly"},
+            "toc": {"slugify": _github_slugify},
+        },
     )
     out_dir.mkdir(parents=True, exist_ok=True)
     for page in pages:
