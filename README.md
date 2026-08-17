@@ -37,6 +37,69 @@ The prediction grain is **facility × accounting month × as-of snapshot date**:
 The target is `actual_month_end_net_revenue`, which is only known **after
 accounting close**.
 
+## Architecture at a glance
+
+**System view** — offline-first, with an opt-in Azure ML + Fabric path:
+
+```mermaid
+flowchart LR
+    subgraph Offline[Local / offline path]
+      SD[Synthetic data] --> FE[Leakage-safe features]
+      FE --> TR[Train & compare candidates]
+      TR --> CH[Champion bundle]
+      CH --> UI[Build & Learn React UI + FastAPI]
+    end
+    subgraph Cloud[Azure ML - opt-in]
+      DA[Data asset + Environment] --> A[AutoML - no-code]
+      DA --> C[Code-first - SDK / UI]
+      A --> REG[Model registry]
+      C --> REG
+      REG --> GATE{Governance gate}
+      GATE -->|approved| BE[Batch endpoint - champion-pipeline]
+      BE --> OL[OneLake -> Power BI]
+      BE --> MON[Monitor + continuous evaluation]
+      MON -->|drift / cadence| DA
+    end
+    CH -. publish .-> REG
+```
+
+**Codebase view** — a layered `src/` package with thin interfaces on top:
+
+```mermaid
+flowchart TB
+    CLI[interfaces.cli] --> CORE
+    API[interfaces.api + React UI] --> CORE
+    subgraph CORE[core package]
+      DATA[core.data<br/>schema + contracts + synthetic] --> FEAT[core.features<br/>leakage-safe builder]
+      FEAT --> TRAIN[core.training<br/>time-aware split + entry point]
+      TRAIN --> EVAL[core.evaluation<br/>metrics + selection + KPI]
+      EVAL --> INFER[core.inference<br/>bundle + batch score + MLflow]
+    end
+    CONF[config<br/>base/dev/test/prod] --> CORE
+    CORE --> INT[integrations<br/>azureml / automl / fabric]
+    CORE --> OPS[ops.monitoring<br/>drift]
+```
+
+**End-to-end sequence** — train once, score many:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as You (CLI / SDK / UI)
+    participant AML as Azure ML
+    participant Reg as Model registry
+    participant BE as Batch endpoint
+    U->>AML: submit training (AutoML or code-first)
+    AML-->>U: completed run + MLflow model + metrics
+    U->>Reg: register champion (tagged authoring_pattern)
+    U->>BE: deploy champion-pipeline; set as default
+    U->>BE: invoke(mid-month snapshot)
+    BE-->>U: predictions.csv (self-describing rows)
+```
+
+Full detail: [docs/architecture/overview.md](docs/architecture/overview.md) and
+[docs/architecture/mlops-v2.md](docs/architecture/mlops-v2.md).
+
 ## Four purposes, one repository
 
 1. **Reusable, production-oriented accelerator** — src-layout package, MLOps
@@ -99,6 +162,95 @@ uv run revenue-prediction serve            # http://127.0.0.1:8000  (API docs at
 - **Stop:** `scripts/stop-ui.sh` terminates the process (PID file first, then the
   listening port as a fallback).
 - **Ports/host:** override with `UI_PORT` / `UI_HOST` or `--port` / `--host`.
+
+## Deploy to Azure ML — step by step (opt-in)
+
+Do the offline quickstart first, then add the cloud when you're ready.
+
+**1. Provision a workspace.** Pick a profile in [`infra/`](infra/) (see
+[`infra/README.md`](infra/README.md)):
+
+```bash
+# Learning / demo (public quickstart) — Bicep
+az group create -n <rg> -l eastus2
+az deployment group create -g <rg> \
+  -f infra/bicep/main.bicep -p infra/bicep/quickstart.bicepparam
+# Production-like secure managed-VNet uses infra/terraform/ or the secure Bicep param.
+```
+
+**2. Create your `.env`.** Copy the template and fill in **your** values locally
+(never commit it — `.env` is git-ignored):
+
+```bash
+cp .env.example .env
+# Set at least:
+#   RPA_AZURE_ML__SUBSCRIPTION_ID=<your-subscription-id>
+#   RPA_AZURE_ML__RESOURCE_GROUP=<rg>
+#   RPA_AZURE_ML__WORKSPACE_NAME=<workspace>
+# Auth uses DefaultAzureCredential — no secrets go in .env.
+```
+
+**3. Install the Azure extra and sign in:**
+
+```bash
+uv sync --extra azure
+az login --tenant <your-tenant>
+uv run revenue-prediction info --env dev     # verify config (no secrets printed)
+```
+
+**4. Register the data asset and environment** (snippets in
+[`notebooks/code_first/`](notebooks/code_first/) and [`notebooks/automl/`](notebooks/automl/)),
+then **run your first pattern** (below).
+
+**5. Register -> gate -> deploy -> monitor** using the runbooks:
+[deploy/update](docs/operations/runbooks/batch-endpoint-deploy-and-update.md) ·
+[promote dev->test->prod](docs/operations/runbooks/promote-across-environments.md) ·
+[monitoring + continuous evaluation](docs/operations/monitoring.md).
+
+> Prefer a guided walkthrough? Open the
+> [end-to-end notebook](notebooks/end_to_end/00_end_to_end_walkthrough.ipynb) — it
+> runs the offline path and shows the opt-in cloud steps in sequence.
+
+## Which pattern should I start with?
+
+There are **four** authoring patterns (AutoML UI/SDK, code-first UI/SDK) that all
+produce the **same governed model**. Recommended order:
+
+1. **Start with AutoML (SDK)** — a fast, explainable **benchmark**; establishes a
+   WAPE bar with no manual tuning.
+2. **Graduate to code-first (SDK)** — the governed **champion** path with explicit
+   leakage-safe features, time-aware validation, and full reproducibility.
+3. Use the **UI patterns** (AutoML wizard, Designer) for demos and analyst
+   self-service.
+
+Details and a side-by-side comparison:
+[docs/patterns/model-selection-and-evaluation.md](docs/patterns/model-selection-and-evaluation.md).
+
+## Azure ML workspace at a glance
+
+What you'll see in Azure ML Studio, and where this accelerator's assets live
+(full tour: [docs/operations/workspace-tour.md](docs/operations/workspace-tour.md)):
+
+| Section | Key tabs | This accelerator |
+| --- | --- | --- |
+| **Authoring** | Notebooks · Automated ML · Designer | AutoML wizard (Pattern 1), Designer component (Pattern 4), notebooks |
+| **Assets** | Data · Jobs · Components · Models · Endpoints | `revenue_snapshots` data, training/scoring jobs, `revenue-net-revenue-model`, `revenue-batch-endpoint` |
+| **Manage** | Compute · Monitoring · Linked Services | `cpu-cluster`, drift monitoring, OneLake/Fabric link |
+
+Reading a run's **Metrics** screen (MAE, RMSE, R², NRMSE, …) is explained in
+[docs/modeling/models-and-metrics.md](docs/modeling/models-and-metrics.md#automl-run-metrics-in-azure-ml-studio).
+
+## Where to go next
+
+- **New here?** Run the offline quickstart, then the
+  [Build & Learn app](#build--learn-app--start--stop).
+- **Understand the design:** [architecture overview](docs/architecture/overview.md) ·
+  [MLOps v2 mapping](docs/architecture/mlops-v2.md).
+- **Run the demo:** [end-to-end demo script](docs/demo/end-to-end-demo-script.md).
+- **Pick a pattern & read metrics:**
+  [model selection & evaluation](docs/patterns/model-selection-and-evaluation.md) ·
+  [models & metrics](docs/modeling/models-and-metrics.md).
+- **Operate it:** [runbooks](docs/operations/runbooks/README.md).
 
 ## Repository map
 

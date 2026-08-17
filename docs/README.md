@@ -41,6 +41,7 @@ For **selecting, comparing, and evaluating** models across all four, see
   [deployment/checklist.md](deployment/checklist.md),
   [deployment/python-dependencies-and-vnet.md](deployment/python-dependencies-and-vnet.md)
 - **Operations:** [operations/runbooks/](operations/runbooks/README.md) (task runbooks index),
+  [operations/workspace-tour.md](operations/workspace-tour.md) (Azure ML Studio UI tour),
   [operations/inference-in-production.md](operations/inference-in-production.md),
   [operations/monitoring.md](operations/monitoring.md),
   [operations/retraining.md](operations/retraining.md),

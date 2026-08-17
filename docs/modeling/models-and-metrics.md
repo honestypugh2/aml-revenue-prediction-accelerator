@@ -72,6 +72,41 @@ so directional error is never hidden. See
 [modeling/strategy.md](strategy.md) and
 [success-metrics-and-kpis.md](success-metrics-and-kpis.md).
 
+## AutoML run metrics in Azure ML Studio
+
+When you open a run in **Assets -> Jobs -> Metrics**, Studio shows a broader set
+of regression metrics than the headline WAPE. Here is how to read them for this
+use case (example values from a synthetic AutoML run):
+
+| Studio metric | Example | What it measures | How to read it here |
+| --- | --- | --- | --- |
+| **Explained variance** | 0.99997 | Share of variance captured (like R² but not penalizing bias) | Near 1 = model tracks the ups/downs of revenue well |
+| **Mean absolute error (MAE)** | 1274.2 | Average absolute **dollar** miss | Typical dollar error per facility-month; communicate this to finance |
+| **Mean absolute percentage error (MAPE)** | 0.030281 | Average **%** error per row | ~3% average; unstable for tiny facilities (why WAPE is primary) |
+| **Median absolute error** | ~0 | Middle absolute error | Very low = most rows nearly exact; a few large misses pull MAE up |
+| **Normalized MAE** | 0.00025 | MAE scaled to the target range | Scale-free; compare across datasets |
+| **Normalized median absolute error** | ~0 | Median error, scaled | Robust to outliers |
+| **Normalized RMSE (NRMSE)** | 0.0015 | RMSE scaled to range — **AutoML's primary metric here** | Lower is better; the leaderboard ranks on this |
+| **Normalized RMSE log error** | 0.0012 | NRMSE on a log scale | Emphasizes proportional error |
+| **R² score** | 0.99997 | Variance explained vs. predicting the mean | Near 1 = far better than the naive average |
+| **Root mean squared error (RMSE)** | 7566.7 | Dollar error, **penalizing large misses** | Bigger than MAE => a few large errors exist; investigate those facilities |
+| **Root mean squared log error (RMSLE)** | 0.0016 | RMSE on a log scale | Penalizes under-prediction less harshly |
+| **Spearman correlation** | 0.99991 | Rank correlation of predicted vs. actual | Near 1 = ranks facilities correctly (useful for prioritization) |
+
+**How to use this screen:**
+
+- **Rank/select** on AutoML's primary metric (**NRMSE**); confirm **R²** and
+  **Explained variance** are high and similar (large gaps hint at bias).
+- **Translate to dollars** with **MAE** (typical miss) and **RMSE** (worst-case
+  sensitivity). If RMSE >> MAE, a few facilities have large errors — disaggregate.
+- **Cross-check** against the accelerator's headline **WAPE + bias**, then grade
+  against the [KPI scorecard](success-metrics-and-kpis.md). Studio's built-ins are
+  per-row; WAPE is dollar-weighted, which is why we report both.
+
+> Very high R²/low error on **synthetic** data is expected — the generator is
+> learnable by design. On real data, expect more modest numbers and rely on the
+> disaggregated WAPE/bias and the KPI scorecard, not a single headline metric.
+
 ## From metrics to a decision
 
 1. **Compare** candidates on WAPE (code-first) or the leaderboard (AutoML).
