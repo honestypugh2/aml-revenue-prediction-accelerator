@@ -2,7 +2,7 @@
 # Requires `uv` (https://docs.astral.sh/uv/).
 
 .DEFAULT_GOAL := help
-.PHONY: help setup sync data train predict test test-cov lint format typecheck check ui clean live-test
+.PHONY: help setup sync data train predict test test-cov lint format typecheck check ui clean live-test docs-html
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -44,7 +44,6 @@ typecheck: ## Type check with pyright
 	uv run pyright src
 
 check: lint typecheck test ## Run all quality gates
-
 serve: ## Run the FastAPI backend (serves the built React UI at / if present)
 	uv run revenue-prediction serve --reload
 
@@ -59,6 +58,9 @@ frontend-build: ## Build the React frontend into frontend/dist
 
 ui: frontend-build ## Build the UI and serve it via the backend at http://127.0.0.1:8000
 	uv run revenue-prediction serve
+
+docs-html: ## Build a static HTML version of the docs into ./site
+	uv run python scripts/build_docs_html.py
 
 clean: ## Remove caches and generated artifacts
 	rm -rf .pytest_cache .ruff_cache .coverage htmlcov outputs mlruns frontend/dist

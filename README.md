@@ -92,7 +92,7 @@ sequenceDiagram
     U->>AML: submit training (AutoML or code-first)
     AML-->>U: completed run + MLflow model + metrics
     U->>Reg: register champion (tagged authoring_pattern)
-    U->>BE: deploy champion-pipeline; set as default
+    U->>BE: deploy champion-pipeline as default
     U->>BE: invoke(mid-month snapshot)
     BE-->>U: predictions.csv (self-describing rows)
 ```

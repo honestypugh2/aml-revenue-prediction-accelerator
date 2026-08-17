@@ -64,6 +64,9 @@ data/synthetic/*.csv
 # Local-only demo / talk-track material (kept on the local branch, never committed)
 /demo-local/
 
+# Generated static HTML docs site (build artifact; rebuild with `make docs-html`)
+/site/
+
 # Terraform
 .terraform/
 *.tfstate
