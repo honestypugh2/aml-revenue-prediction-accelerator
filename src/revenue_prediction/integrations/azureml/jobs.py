@@ -23,7 +23,7 @@ def build_command_job(
     configured compute cluster. Requires the ``azure`` extra.
     """
     try:
-        from azure.ai.ml import Input, command
+        from azure.ai.ml import Input, Output, command
         from azure.ai.ml.constants import AssetTypes
     except ImportError as exc:  # pragma: no cover
         raise ImportError("Install the 'azure' extra: `uv sync --extra azure`.") from exc
@@ -36,6 +36,7 @@ def build_command_job(
         code=code_dir,
         command=command_override or default_command,
         inputs={"training_data": Input(type=AssetTypes.URI_FILE, path=training_data_asset)},
+        outputs={"model_dir": Output(type=AssetTypes.URI_FOLDER)},
         environment=environment,
         compute=azure_ml.compute_cluster,
         experiment_name="revenue-code-first",
@@ -48,10 +49,14 @@ def register_model_from_run(  # pragma: no cover - needs azure
     run_name: str,
     azure_ml: AzureMLConfig,
     model_path: str = "model",
+    authoring_pattern: str = "code_first",
+    tags: dict[str, str] | None = None,
 ) -> Any:
     """Register the model produced by a completed job run.
 
-    Uses the MLflow model produced by the training job. Returns the registered
+    Uses the MLflow model produced by the training job. Tags the version with
+    ``authoring_pattern`` (``code_first`` or ``automl``) so the registry shows
+    which pattern produced each version side by side. Returns the registered
     model object.
     """
     try:
@@ -60,10 +65,12 @@ def register_model_from_run(  # pragma: no cover - needs azure
     except ImportError as exc:
         raise ImportError("Install the 'azure' extra: `uv sync --extra azure`.") from exc
 
+    model_tags = {"authoring_pattern": authoring_pattern, **(tags or {})}
     model = Model(
         path=f"azureml://jobs/{run_name}/outputs/artifacts/paths/{model_path}",
         name=azure_ml.registered_model_name,
         type=AssetTypes.MLFLOW_MODEL,
         description="Champion net-revenue regression model (facility-month-snapshot grain).",
+        tags=model_tags,
     )
     return ml_client.models.create_or_update(model)

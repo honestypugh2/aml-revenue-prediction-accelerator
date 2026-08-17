@@ -25,6 +25,44 @@ flowchart TB
     CD[CD: env promotion dev->test->prod] -.-> Outer
 ```
 
+## Reference architecture — dev → test → prod
+
+This expands the two loops to the **classical machine learning** reference
+([Azure Architecture Center](https://learn.microsoft.com/azure/architecture/ai-ml/guide/machine-learning-operations-v2#classical-machine-learning-architecture)),
+showing that **both** authoring paths — **no-code AutoML** and **code-first** —
+converge on one registered model that is promoted across environments with
+human-gated approval, then monitored with drift **and** continuous evaluation.
+
+```mermaid
+flowchart LR
+    subgraph DEV[Dev workspace - inner loop]
+      D[Data asset + environment]
+      D --> A1[No-code AutoML<br/>UI + SDK]
+      D --> C1[Code-first<br/>UI + SDK]
+      A1 --> EV[Evaluate + explain<br/>WAPE/bias, SHAP]
+      C1 --> EV
+      EV --> REG[Register model<br/>versioned + lineage]
+    end
+    REG --> G1{Gate: CI + RAI +<br/>human approval}
+    subgraph TEST[Test / staging workspace]
+      G1 -->|promote| ST[Deploy to test endpoint]
+      ST --> VT[Validate: accuracy,<br/>endpoint smoke, contracts]
+    end
+    VT --> G2{Gate: human approval}
+    subgraph PROD[Prod workspace - outer loop]
+      G2 -->|promote| DP[Deploy: batch default /<br/>online optional]
+      DP --> MON[Monitor: drift +<br/>continuous evaluation]
+    end
+    MON -->|threshold / schedule| ACT[Events & actions]
+    ACT -->|retrain| D
+    ACT -->|investigate| EV
+```
+
+Environment behavior is driven by the `configs/dev|test|prod` profiles (dataset
+size, AutoML budget, model set); cloud identifiers come only from environment
+variables. See
+[operations/runbooks/promote-across-environments.md](../operations/runbooks/promote-across-environments.md).
+
 ## Component mapping
 
 | MLOps v2 element | In this repo |
@@ -38,6 +76,7 @@ flowchart TB
 | Governance gate | Champion/challenger + promotion rule ([governance](../governance/model-governance.md)) |
 | Deployment | Batch (default) / online endpoints ([`mlops/endpoints/`](../../mlops/endpoints/)) |
 | Monitoring | Drift/quality ([`mlops/monitoring/`](../../mlops/monitoring/), [operations/monitoring.md](../operations/monitoring.md)) |
+| Continuous evaluation | Predictions vs post-close actuals ([`mlops/components/continuous_evaluation.yml`](../../mlops/components/continuous_evaluation.yml), `core.evaluation.azureml_evaluate`) |
 | Retraining trigger | Scheduled/drift/degradation ([operations/retraining.md](../operations/retraining.md)) |
 | CI | [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) (ruff, pyright, pytest, contracts, neutrality, bicep, frontend) |
 | CD / environment promotion | `configs/dev|test|prod` + [deployment](../deployment/guide.md) |

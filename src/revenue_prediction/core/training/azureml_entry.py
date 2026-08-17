@@ -41,11 +41,22 @@ def main() -> None:
         champ = result.results[result.selection.champion]
         mlflow.log_metrics({f"test_{k}": v for k, v in champ.metrics.items() if v == v})
 
-        # Log the champion estimator as an MLflow sklearn model.
+        # Package preprocessing and estimator together so raw snapshots can be scored.
         try:
-            import mlflow.sklearn as mlflow_sklearn
+            import mlflow.pyfunc as mlflow_pyfunc
 
-            mlflow_sklearn.log_model(champ.estimator, artifact_path="model")
+            from revenue_prediction.core.inference.mlflow_model import (
+                RevenuePredictionModel,
+                inference_requirements,
+            )
+
+            package_dir = Path(__file__).resolve().parents[2]
+            mlflow_pyfunc.log_model(
+                artifact_path="model",
+                python_model=RevenuePredictionModel(result.champion_bundle),
+                code_paths=[str(package_dir)],
+                pip_requirements=inference_requirements(),
+            )
         except Exception as exc:  # pragma: no cover - defensive for exotic estimators
             mlflow.log_param("model_log_error", str(exc)[:250])
 

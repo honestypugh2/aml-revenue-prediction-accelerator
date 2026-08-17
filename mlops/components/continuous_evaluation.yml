@@ -1,0 +1,29 @@
+# Azure Machine Learning command component (SDK v2 / CLI v2) for continuous
+# evaluation: compares scored predictions to post-close actuals and logs
+# WAPE/bias (overall + by facility + by snapshot day) to MLflow.
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: revenue_continuous_evaluation
+display_name: Revenue continuous evaluation (predictions vs actuals)
+version: "1"
+description: >-
+  Measure realized accuracy of the deployed champion against closed-month
+  actuals. Synthetic data only.
+
+inputs:
+  predictions:
+    type: uri_file
+  actuals:
+    type: uri_file
+
+outputs:
+  report:
+    type: uri_folder
+
+code: ../../src
+environment: azureml:revenue-prediction-env@latest
+command: >-
+  python -m revenue_prediction.core.evaluation.azureml_evaluate
+  --predictions ${{inputs.predictions}}
+  --actuals ${{inputs.actuals}}
+  --output ${{outputs.report}}

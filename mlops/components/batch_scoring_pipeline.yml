@@ -1,0 +1,26 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+type: pipeline
+name: revenue_batch_scoring_pipeline
+display_name: Revenue snapshot batch scoring pipeline
+version: "2"
+description: Run controlled batch scoring without the no-code model runtime overlay.
+
+inputs:
+  input_data:
+    type: uri_file
+
+outputs:
+  predictions:
+    type: uri_folder
+
+jobs:
+  score:
+    component: ./batch_score.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      input_data: ${{parent.inputs.input_data}}
+      model:
+        type: mlflow_model
+        path: azureml:revenue-net-revenue-model@latest
+    outputs:
+      predictions: ${{parent.outputs.predictions}}

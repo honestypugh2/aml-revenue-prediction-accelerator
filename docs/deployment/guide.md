@@ -13,6 +13,31 @@
 5. **Optional online endpoint:** managed online deployment for low-latency
    scoring.
 
+## Train → register → gate → deploy (sequence)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant DS as Data scientist
+    participant AML as Azure ML<br/>(compute + MLflow)
+    participant Reg as Model registry
+    participant Gate as Governance gate<br/>(human approval)
+    participant BE as Batch endpoint
+
+    DS->>AML: submit code-first / AutoML training job
+    AML->>AML: time-aware split -> train candidates -> select champion (WAPE)
+    AML-->>DS: completed run + logged MLflow model
+    DS->>Reg: register_model_from_run(...) -> revenue-net-revenue-model
+    DS->>Gate: request promotion (champion vs incumbent)
+    alt Approved
+        Gate-->>DS: approved
+        DS->>BE: create/update champion-pipeline deployment
+        BE-->>DS: Succeeded (ready to score)
+    else Rejected
+        Gate-->>DS: keep incumbent
+    end
+```
+
 ## 0. Provision infrastructure
 
 Pick a profile in [`infra/`](../../infra/):

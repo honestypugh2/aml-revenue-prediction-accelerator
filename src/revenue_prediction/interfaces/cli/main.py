@@ -84,6 +84,50 @@ def predict(
     console.print(f"[green]Wrote {len(predictions)} predictions to {output_path}[/]")
 
 
+@app.command("scorecard")
+def scorecard(
+    predictions_path: Path = typer.Argument(..., help="Scored predictions (parquet/csv)"),
+    actuals_path: Path = typer.Argument(..., help="Closed-month actuals with the target column"),
+    baseline_wape: float | None = typer.Option(
+        None, "--baseline-wape", help="Manual-analyst baseline WAPE (fraction) for the beat-baseline KPI"
+    ),
+) -> None:
+    """Measure evaluation metrics against checkpoint targets and business KPIs."""
+    from revenue_prediction.core.data.io import read_dataset
+    from revenue_prediction.core.data.schema import KEY_COLUMNS, TARGET
+    from revenue_prediction.core.evaluation.kpi import kpi_scorecard
+    from revenue_prediction.core.evaluation.metrics import compute_metrics, metrics_by_snapshot_day
+
+    prediction_col = "predicted_month_end_net_revenue"
+    preds = read_dataset(predictions_path)
+    actuals = read_dataset(actuals_path)
+    keys = [c for c in KEY_COLUMNS if c in preds.columns and c in actuals.columns]
+    merged = preds.merge(actuals[[*keys, TARGET]], on=keys, how="inner")
+    if merged.empty:
+        console.print("[red]No overlapping keys between predictions and actuals.[/]")
+        raise typer.Exit(code=1)
+
+    overall = compute_metrics(merged[TARGET], merged[prediction_col])
+    by_day = metrics_by_snapshot_day(merged, TARGET, prediction_col)
+    board = kpi_scorecard(overall, by_day, baseline_wape=baseline_wape)
+
+    table = Table(title="KPI scorecard — metrics vs targets")
+    for col in ("checkpoint", "metric", "value", "target", "met", "margin"):
+        table.add_column(col)
+    for _, row in board.iterrows():
+        met = "[green]YES[/]" if bool(row["met"]) else "[red]NO[/]"
+        table.add_row(
+            str(row["checkpoint"]),
+            str(row["metric"]),
+            f"{float(row['value']):.4f}",
+            f"{float(row['target']):.4f}",
+            met,
+            f"{float(row['margin']):+.4f}",
+        )
+    console.print(table)
+    console.print(f"[bold]Overall WAPE:[/] {overall['wape']:.4f}  [bold]bias:[/] {overall['bias']:+.4f}")
+
+
 @app.command("validate-data")
 def validate_data(
     data_path: Path = typer.Argument(..., help="Path to snapshot data (parquet/csv)"),

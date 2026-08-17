@@ -46,6 +46,12 @@ Follow the official guidance for required outbound rules and private link:
 - Secure workspace tutorial:
   https://learn.microsoft.com/azure/machine-learning/tutorial-create-secure-workspace
 
+Python libraries may come from Conda, `pip`, `uv`, or a prebuilt image, but the
+environment builder and job compute need an approved network path to every
+package source. For managed-VNet and BYO-VNet routing, private feeds, ACR image
+builds, and the recommended production pattern, see
+[`docs/deployment/python-dependencies-and-vnet.md`](../deployment/python-dependencies-and-vnet.md).
+
 ## Application-level security
 
 - Input data is validated at the boundary via Pandera contracts before use.

@@ -1,0 +1,26 @@
+# Ordinary command component avoids the dependency overlay used by no-code
+# model batch deployments.
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: revenue_batch_score
+display_name: Revenue snapshot batch scoring
+version: "2"
+description: Score synthetic facility snapshots with the registered champion model.
+
+inputs:
+  input_data:
+    type: uri_file
+  model:
+    type: mlflow_model
+
+outputs:
+  predictions:
+    type: uri_folder
+
+code: ../../src
+environment: azureml:revenue-prediction-env@latest
+command: >-
+  python -m revenue_prediction.core.inference.azureml_batch_score
+  --model ${{inputs.model}}
+  --data ${{inputs.input_data}}
+  --output ${{outputs.predictions}}

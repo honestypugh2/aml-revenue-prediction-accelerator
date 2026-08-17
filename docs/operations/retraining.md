@@ -16,6 +16,32 @@ Retrain on an **approved schedule** or when a trigger fires:
 Do **not** retrain reflexively on every new month; unnecessary retraining adds
 risk and cost. Prefer scheduled retraining plus trigger-based exceptions.
 
+## Retraining loop (sequence)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Mon as Monitoring<br/>(drift / degradation)
+    participant Owner as Model owner
+    participant AML as Azure ML<br/>(training job)
+    participant Reg as Model registry
+    participant Gate as Governance gate<br/>(human approval)
+    participant BE as Batch endpoint
+
+    Mon->>Owner: trigger (PSI crossed / MAE worse / schema change / cadence)
+    Owner->>AML: submit refresh -> train -> compare (time-aware split)
+    AML-->>Owner: new champion candidate + metrics
+    Owner->>Reg: register candidate (new version)
+    Owner->>Gate: request promotion vs incumbent
+    alt Beats incumbent by margin AND passes RAI review
+        Gate-->>Owner: approved
+        Owner->>BE: update deployment to new model version
+        BE-->>Owner: Succeeded
+    else Does not clear the bar
+        Gate-->>Owner: rejected (keep incumbent)
+    end
+```
+
 ## Retraining procedure
 
 1. Refresh the training dataset (append newly-closed months). Re-run data

@@ -51,6 +51,37 @@ preds = predict_with_onnx("outputs/model.onnx", engineered_features_matrix)
 - Validate parity: compare ONNX predictions to the Python model on a sample
   before relying on the ONNX artifact.
 
+## Real-world use: a low-latency "what-if" endpoint for finance
+
+**Scenario.** After the batch job lands month-end estimates, a finance analyst
+opens an internal web app and nudges a facility's mid-month inputs (e.g. "what if
+gross charges finish 3% higher?") to see the revised net-revenue estimate
+**instantly**. This is on-demand, single-facility, sub-second scoring — the one
+case where a **managed online endpoint** beats batch.
+
+**Why ONNX here.**
+
+- **Latency:** ONNX Runtime typically returns a single-row prediction in low
+  single-digit milliseconds, versus loading a Python model per request.
+- **Cost & density:** the smaller runtime lets a modest online endpoint handle
+  many analysts; you can pair it with an Azure ML **prebuilt inference image**
+  (ONNX Runtime included) for no-code deployment.
+- **Portability:** the same `model.onnx` also runs inside the Power BI/Fabric
+  layer or an edge tool without shipping the training stack.
+
+**Shape of the deployment.**
+
+1. Export the champion estimator to `model.onnx` (below) and register it.
+2. Deploy to a **managed online endpoint** using a prebuilt ONNX inference image;
+   the scoring script applies the `LeakageSafeFeatureBuilder`, then calls ONNX
+   Runtime.
+3. Keep the **batch** pipeline as the system of record for scheduled, all-facility
+   scoring; the online ONNX endpoint serves only interactive what-if traffic and
+   is deleted when idle to avoid always-on cost.
+
+> Rule of thumb: **batch (pickle/MLflow) for the scheduled run; ONNX online for
+> interactive, low-latency what-if scoring.** Most teams need only the batch path.
+
 ## References
 
 - ONNX Runtime and models — Azure Machine Learning

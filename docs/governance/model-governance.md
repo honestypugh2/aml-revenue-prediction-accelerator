@@ -18,7 +18,7 @@ flowchart LR
 ## Champion / challenger
 
 - **Champion:** best model on the held-out test block by the configured primary
-  metric (`model.primary_metric`, default `mae`).
+  metric (`model.primary_metric`, default `wape`).
 - **Challenger:** runner-up candidate, or a newly trained model during a
   retraining cycle.
 - **Promotion rule:** a challenger is *promotable* only if it beats the incumbent

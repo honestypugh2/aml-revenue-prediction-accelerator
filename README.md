@@ -78,6 +78,28 @@ No Azure or Fabric credentials are required for the offline path. Cloud steps
 (AutoML, code-first jobs, registration, endpoints, OneLake, deployment) are
 **opt-in** and documented under [`docs/`](docs/).
 
+## Build & Learn app — start & stop
+
+The **Build & Learn** experience is the FastAPI backend serving the built React
+UI at a single URL. Two ways to run it:
+
+```bash
+# Managed background process (idempotent; logs to .run/ui.log)
+scripts/start-ui.sh                 # build UI if needed, then start -> http://127.0.0.1:8000
+scripts/stop-ui.sh                  # stop it (by PID file, or by port)
+scripts/start-ui.sh --foreground    # run in the foreground (Ctrl+C to stop)
+scripts/start-ui.sh --reload        # dev mode (auto-reload)
+
+# …or run the server directly
+uv run revenue-prediction serve            # http://127.0.0.1:8000  (API docs at /docs)
+```
+
+- **Start:** `scripts/start-ui.sh` builds `frontend/dist` if missing, starts the
+  server in the background, waits for `/api/health`, and prints the URL + log path.
+- **Stop:** `scripts/stop-ui.sh` terminates the process (PID file first, then the
+  listening port as a fallback).
+- **Ports/host:** override with `UI_PORT` / `UI_HOST` or `--port` / `--host`.
+
 ## Repository map
 
 | Path | Purpose |
@@ -107,6 +129,7 @@ No Azure or Fabric credentials are required for the offline path. Cloud steps
 - Deployment: [`docs/deployment/`](docs/deployment/)
 - Governance & responsible AI: [`docs/governance/`](docs/governance/)
 - Operations, monitoring, retraining: [`docs/operations/`](docs/operations/)
+- **Operational runbooks** (deploy/update, incident/rollback, data refresh): [`docs/operations/runbooks/`](docs/operations/runbooks/README.md)
 - Inference in production (runbook): [`docs/operations/inference-in-production.md`](docs/operations/inference-in-production.md)
 - Education & workshops: [`docs/education/`](docs/education/), [`docs/workshops/`](docs/workshops/)
 

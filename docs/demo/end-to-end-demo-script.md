@@ -298,7 +298,9 @@ uv run revenue-prediction predict path/to/champion_bundle path/to/day15_snapshot
 ```
 
 **Show:** the deployment assets in [`mlops/endpoints/`](../../mlops/endpoints/)
-(`batch-endpoint.yml`, `batch-deployment.yml`) and the self-describing output
+(`batch-endpoint.yml`, `batch-deployment.yml` — a **pipeline-component**
+deployment that reuses the prebuilt environment image, so invocation never
+triggers an image build) and the self-describing output
 (every row carries `predicted_month_end_net_revenue`, `model_version`, `run_id`,
 `cutoff_day`, `scored_at`). Full runbook:
 [operations/inference-in-production.md](../operations/inference-in-production.md).
@@ -353,6 +355,7 @@ uv run revenue-prediction train-local
 uv run revenue-prediction serve                # UI + API at http://127.0.0.1:8000
 uv run revenue-prediction validate-data <file> --no-require-target
 uv run revenue-prediction predict <bundle> <file>
+uv run revenue-prediction scorecard <predictions> <actuals> --baseline-wape 0.08
 uv run revenue-prediction info --env dev
 
 # Azure (opt-in; requires your subscription + `az login`)

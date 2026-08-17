@@ -101,11 +101,57 @@ exact model that produced it:
 
 | Mode | When to use | Asset |
 | --- | --- | --- |
-| **Batch scoring (default)** | Scheduled scoring at each checkpoint; cheapest; no always-on cost. | [`mlops/endpoints/batch-endpoint.yml`](../../mlops/endpoints/batch-endpoint.yml), [`batch-deployment.yml`](../../mlops/endpoints/batch-deployment.yml) |
+| **Batch scoring (default)** | Scheduled scoring at each checkpoint; cheapest; no always-on cost. | [`mlops/endpoints/batch-endpoint.yml`](../../mlops/endpoints/batch-endpoint.yml), [`batch-deployment.yml`](../../mlops/endpoints/batch-deployment.yml) (a **pipeline-component** deployment — see below) |
 | **Managed online endpoint (optional)** | Low-latency, on-demand scoring (e.g. an app requests a single facility). Delete when idle. | [`online-endpoint.yml`](../../mlops/endpoints/online-endpoint.yml), [`online-deployment.yml`](../../mlops/endpoints/online-deployment.yml) |
 
 Batch is the recommended default: predictions for all facilities are produced in
 one scheduled run and landed for Power BI.
+
+### How the batch deployment works (pipeline component)
+
+The batch deployment is a **pipeline-component deployment**, not a no-code model
+batch deployment. A single-step pipeline runs a command component
+([`mlops/components/batch_score.yml`](../../mlops/components/batch_score.yml))
+that loads the registered MLflow model and scores the mounted snapshot in the
+project-controlled environment ([`revenue-prediction-env`](../../mlops/environments/environment.yml)).
+
+**Why a pipeline component rather than a no-code model batch deployment?** Azure
+ML's no-code model batch runtime injects `azureml-dataset-runtime[fuse]`, whose
+current versions require `pyarrow>=23` while MLflow pins `pyarrow<20` — an
+unsolvable pip conflict that fails at image build (`prepare_image`). Running the
+scorer as an ordinary command component reuses the already-built environment
+image, so **no image is built at invoke time** and the dependency conflict never
+arises.
+
+The entry point is
+[`src/revenue_prediction/core/inference/azureml_batch_score.py`](../../src/revenue_prediction/core/inference/azureml_batch_score.py),
+which delegates to the portable pyfunc wrapper
+[`src/revenue_prediction/core/inference/mlflow_model.py`](../../src/revenue_prediction/core/inference/mlflow_model.py).
+The wrapper packages the **leakage-safe feature builder together with the
+estimator**, so the endpoint scores **raw snapshots** (no pre-transformed
+features required).
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sched as Scheduler / caller
+    participant BE as Batch endpoint<br/>(revenue-batch-endpoint)
+    participant Pipe as Pipeline component<br/>(champion-pipeline)
+    participant Job as Score command<br/>(cpu-cluster)
+    participant Reg as Model registry
+    participant Store as Datastore / OneLake
+
+    Sched->>BE: invoke(input_data = snapshot.parquet)
+    BE->>Pipe: start single-step pipeline job
+    Pipe->>Job: run azureml_batch_score (prebuilt env, no image build)
+    Reg-->>Job: mount revenue-net-revenue-model (mlflow_model)
+    Store-->>Job: mount input snapshot
+    Job->>Job: load pyfunc bundle -> leakage-safe features -> predict
+    Job->>Store: write predictions.csv (self-describing rows)
+    Job-->>Pipe: Completed
+    Pipe-->>BE: Completed
+    BE-->>Sched: job name + output location
+```
 
 > [!IMPORTANT]
 > **Endpoint recommendation for this use case: managed BATCH endpoint.**

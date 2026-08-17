@@ -13,11 +13,14 @@ privacy, compliance, and operational stakeholders before any production use.
 | See how it maps to MLOps v2 | [architecture/mlops-v2.md](architecture/mlops-v2.md) |
 | Understand the package layout | [architecture/repository-structure.md](architecture/repository-structure.md) |
 | Run a full end-to-end **demo** | [demo/end-to-end-demo-script.md](demo/end-to-end-demo-script.md) |
+| Walk it end to end in a **notebook** | [`notebooks/end_to_end/00_end_to_end_walkthrough.ipynb`](../notebooks/end_to_end/00_end_to_end_walkthrough.ipynb) |
 | Run it **offline** on my laptop | [development/getting-started.md](development/getting-started.md) |
 
 ## The four Azure ML authoring patterns
 
 Start at the hub: [patterns/end-to-end-patterns.md](patterns/end-to-end-patterns.md).
+For **selecting, comparing, and evaluating** models across all four, see
+[patterns/model-selection-and-evaluation.md](patterns/model-selection-and-evaluation.md).
 
 | # | Pattern | Guide |
 | --- | --- | --- |
@@ -29,11 +32,16 @@ Start at the hub: [patterns/end-to-end-patterns.md](patterns/end-to-end-patterns
 ## By topic
 
 - **Architecture & decisions:** [architecture/](architecture/) (incl. [ADRs](architecture/adr/))
-- **Modeling:** [modeling/strategy.md](modeling/strategy.md), [modeling/automl.md](modeling/automl.md)
+- **Modeling:** [modeling/strategy.md](modeling/strategy.md), [modeling/automl.md](modeling/automl.md),
+  [modeling/models-and-metrics.md](modeling/models-and-metrics.md),
+  [modeling/success-metrics-and-kpis.md](modeling/success-metrics-and-kpis.md)
 - **Fabric & OneLake:** [fabric/integration.md](fabric/integration.md)
 - **Security & networking:** [security/networking.md](security/networking.md)
-- **Deployment:** [deployment/guide.md](deployment/guide.md), [deployment/checklist.md](deployment/checklist.md)
-- **Operations:** [operations/inference-in-production.md](operations/inference-in-production.md),
+- **Deployment:** [deployment/guide.md](deployment/guide.md),
+  [deployment/checklist.md](deployment/checklist.md),
+  [deployment/python-dependencies-and-vnet.md](deployment/python-dependencies-and-vnet.md)
+- **Operations:** [operations/runbooks/](operations/runbooks/README.md) (task runbooks index),
+  [operations/inference-in-production.md](operations/inference-in-production.md),
   [operations/monitoring.md](operations/monitoring.md),
   [operations/retraining.md](operations/retraining.md),
   [operations/onnx-optimization.md](operations/onnx-optimization.md),

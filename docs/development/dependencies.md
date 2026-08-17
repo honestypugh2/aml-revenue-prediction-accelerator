@@ -4,7 +4,10 @@
 
 - **Python** `>=3.11,<3.13` — compatible with the selected stable versions of
   Azure ML SDK v2, MLflow, scikit-learn, XGBoost, FastAPI, and the Fabric
-  ADLS client.
+  ADLS client. Offline CI covers 3.11 and 3.12; registered Azure ML
+  training/inference environments currently use 3.11. See
+  [Python dependencies and VNet access](../deployment/python-dependencies-and-vnet.md)
+  for cloud-runtime and platform-wheel considerations.
 - **uv** for environment and dependency management, with a committed `uv.lock`.
 - **src layout**, type hints, Pydantic v2 + pydantic-settings, Ruff, Pyright,
   pytest, pytest-cov, and pre-commit.

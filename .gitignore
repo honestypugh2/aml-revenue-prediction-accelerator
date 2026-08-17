@@ -39,11 +39,9 @@ mlartifacts/
 outputs/
 *.joblib
 *.pkl
-*.onnx
 
 # UI runtime (PID + log from scripts/start-ui.sh)
 .run/
-*.log
 
 # Generated synthetic data (regenerate with `revenue-prediction generate-data`)
 data/synthetic/*.parquet
@@ -55,10 +53,6 @@ data/synthetic/*.csv
 !.env.example
 *.pem
 *.key
-*.pfx
-*.p12
-*.jks
-*.keystore
 
 # Customer / workshop artifacts must never be committed (may contain a customer
 # name, participant names, vendor products, or other PII). Keep these outside
@@ -67,30 +61,19 @@ data/synthetic/*.csv
 *:Zone.Identifier
 *.endpointdlp
 
+# Local-only demo / talk-track material (kept on the local branch, never committed)
+/demo-local/
+
 # Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
 *.tfvars
-*.tfvars.json
 !*.tfvars.example
 .terraform.lock.hcl
-*.tfplan
-tfplan
 crash.log
-crash.*.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraformrc
-terraform.rc
-
-# Local databases and generated tabular artifacts
-*.db
-*.sqlite
-*.sqlite3
-data/synthetic/*.json
+tfplan
+*.tfplan
 
 # Notebooks
 .ipynb_checkpoints/

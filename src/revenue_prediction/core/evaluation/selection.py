@@ -37,15 +37,17 @@ def comparison_table(results: dict[str, TrainingResult]) -> pd.DataFrame:
 def select_champion_challenger(
     results: dict[str, TrainingResult],
     config: EvaluationConfig | None = None,
-    metric: str = "mae",
+    metric: str = "wape",
 ) -> Selection:
     """Select champion (best) and challenger (second best) by ``metric``.
 
-    Lower-is-better metrics (mae/rmse/mape/smape) are sorted ascending; ``r2``
-    is sorted descending. The challenger is flagged promotable only if it beats
-    the champion by more than ``challenger_improvement_threshold`` (which, for
-    the standard case, it never does — the check exists for the retraining
-    workflow where a new model is compared against the incumbent).
+    Lower-is-better metrics (wape/mae/rmse/mape/smape) are sorted ascending;
+    ``r2`` is sorted descending. The metric defaults to WAPE (the accelerator's
+    headline metric); callers pass ``settings.model.primary_metric``. The
+    challenger is flagged promotable only if it beats the champion by more than
+    ``challenger_improvement_threshold`` (which, for the standard case, it never
+    does — the check exists for the retraining workflow where a new model is
+    compared against the incumbent).
     """
     config = config or EvaluationConfig()
     ascending = metric != "r2"
