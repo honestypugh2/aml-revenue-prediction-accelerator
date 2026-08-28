@@ -89,3 +89,5 @@ tfplan
 Thumbs.db
 *.swp
 .idea/
+# Generated monitoring windows (rebuild from synthetic data)
+data/monitoring/

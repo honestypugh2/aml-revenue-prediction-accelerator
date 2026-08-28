@@ -326,7 +326,32 @@ question saves real time during an incident.
 | Is inference degrading over time? | **Model monitoring** + realized-accuracy join |
 | Platform-level failures, alerting | **Azure Monitor / Log Analytics** via App Insights |
 
-### 7.1 Monitoring compute clusters and instances
+### 7.1 Two things that are easy to get wrong
+
+**Components must be registered explicitly.** A pipeline that references a
+component by file path (`component: ./train_code_first.yml`) creates an
+*anonymous* component version scoped to that job. The job runs, but the
+**Components** blade stays empty. Register them to make them reusable and
+visible:
+
+```python
+from azure.ai.ml import load_component
+client.components.create_or_update(load_component(source="mlops/components/train_code_first.yml"))
+```
+
+**Built-in monitoring has prerequisites.** The **Monitoring** blade is empty
+until a monitor is created, and `mlops/monitoring/monitoring-schedule.yml`
+depends on four registered data assets. Use
+[`scripts/create_model_monitor.py`](../../scripts/create_model_monitor.py).
+On a workspace with identity-based datastore auth, the monitor also requires a
+**user-assigned identity** — an irreversible identity change, so treat it as a
+deliberate decision rather than a demo step.
+
+Realized accuracy does **not** depend on the monitoring feature. Joining stored
+predictions to closed-month actuals via `revenue_continuous_evaluation` gives
+the outer-loop verdict with no extra identity requirements.
+
+### 7.2 Monitoring compute clusters and instances
 
 ```python
 cluster = client.compute.get("cpu-cluster")

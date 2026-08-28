@@ -12,8 +12,8 @@ trigger:
   interval: 1
 create_monitor:
   compute:
-    instance_type: Standard_DS3_v2
-    runtime_version: "3.3"
+    instance_type: standard_e4s_v3
+    runtime_version: "3.4"
   monitoring_signals:
     input_drift:
       type: data_drift
