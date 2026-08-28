@@ -60,7 +60,11 @@ resource "azurerm_storage_account" "this" {
   # (storage_use_azuread) and the workspace/compute identities get RBAC data
   # roles below for identity-based datastore access.
   shared_access_key_enabled = false
-  tags                      = var.tags
+  # Studio and local clients reach this account over the public endpoint in the
+  # quickstart profile. SecurityControl=Ignore exempts it from the subscription
+  # policy that otherwise disables public network access.
+  public_network_access_enabled = var.storage_public_network_access
+  tags                          = merge(var.tags, var.storage_extra_tags)
 }
 
 resource "azurerm_container_registry" "this" {

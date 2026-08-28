@@ -82,3 +82,17 @@ variable "assign_current_user_storage_roles" {
   description = "Grant the deploying user Blob/File data roles so local data-asset uploads work."
   default     = true
 }
+
+variable "storage_public_network_access" {
+  type        = bool
+  description = "Enable the storage account public endpoint (quickstart/demo profile only)."
+  default     = true
+}
+
+variable "storage_extra_tags" {
+  type        = map(string)
+  description = "Extra tags for the storage account, e.g. a policy-exemption tag."
+  default = {
+    SecurityControl = "Ignore"
+  }
+}

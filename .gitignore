@@ -46,6 +46,8 @@ outputs/
 # Generated synthetic data (regenerate with `revenue-prediction generate-data`)
 data/synthetic/*.parquet
 data/synthetic/*.csv
+# Generated MLTable view (rebuild from the synthetic parquet)
+data/mltable/
 
 # Secrets / environment — NEVER commit these
 .env
