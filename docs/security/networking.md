@@ -29,11 +29,14 @@
 
 - Subscription: `Contributor` or `Owner` (resource management),
   `User Access Administrator` (role assignments) — for the deploying principal.
-- Resource group: `Contributor`, `AzureML Data Scientist`,
-  `AzureML Compute Operator`.
+- Workspace user: `AzureML Data Scientist` on the workspace and `Storage Blob
+  Data Contributor` on its default storage. External users must use the object
+  ID of their accepted B2B guest in the resource tenant.
 - Storage (workspace managed identity): `Storage Blob Data Contributor` and
   `Storage File Data Privileged Contributor` on the default storage account —
   required for job submission.
+- Client Blob/File private endpoints (workspace managed identity): `Reader`, so
+  Azure ML studio can use the private default storage from the client VNet.
 
 ## Managed network / private endpoints
 
@@ -45,6 +48,13 @@ Follow the official guidance for required outbound rules and private link:
   https://learn.microsoft.com/azure/machine-learning/how-to-configure-private-link
 - Secure workspace tutorial:
   https://learn.microsoft.com/azure/machine-learning/tutorial-create-secure-workspace
+
+For the secure Terraform profile's batch endpoint, add managed-network private
+endpoint outbound rules for the default storage account's `queue` and `table`
+subresources. The checked-in Conda environment also requires approved FQDN
+rules for conda-forge and PyPI, or replacement with a private feed/prebuilt
+image. Exact provisioning steps are in
+[`infra/terraform/README.md`](../../infra/terraform/README.md).
 
 Python libraries may come from Conda, `pip`, `uv`, or a prebuilt image, but the
 environment builder and job compute need an approved network path to every

@@ -56,6 +56,16 @@ variable "jumpbox_vm_size" {
   description = "VM size for the jump box."
 }
 
+variable "workspace_user_object_id" {
+  type        = string
+  description = "Object ID of the member or B2B guest user in the subscription's Microsoft Entra tenant who will use Azure ML."
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$", var.workspace_user_object_id))
+    error_message = "workspace_user_object_id must be a Microsoft Entra object ID in UUID format."
+  }
+}
+
 variable "tags" {
   type = map(string)
   default = {

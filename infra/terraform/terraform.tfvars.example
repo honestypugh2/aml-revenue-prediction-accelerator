@@ -11,6 +11,9 @@ subnet_bastion           = "10.30.3.0/26"
 jumpbox_admin_username = "azureuser"
 jumpbox_vm_size        = "Standard_D2s_v5"
 
+# Supply workspace_user_object_id through TF_VAR_workspace_user_object_id. It
+# must be the member or accepted B2B guest object in the subscription's tenant.
+
 tags = {
   workload    = "revenue-prediction-accelerator"
   data        = "synthetic"

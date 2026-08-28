@@ -136,6 +136,7 @@ resource "azurerm_container_registry" "this" {
   sku                           = "Premium"
   admin_enabled                 = false
   public_network_access_enabled = false
+  network_rule_bypass_option    = "AzureServices"
   tags                          = var.tags
 }
 
@@ -277,4 +278,38 @@ resource "azurerm_role_assignment" "ws_blob" {
   scope                = azurerm_storage_account.this.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_machine_learning_workspace.this.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "ws_file" {
+  scope                = azurerm_storage_account.this.id
+  role_definition_name = "Storage File Data Privileged Contributor"
+  principal_id         = azurerm_machine_learning_workspace.this.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "ws_blob_pe_reader" {
+  scope                = azurerm_private_endpoint.blob.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_machine_learning_workspace.this.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "ws_file_pe_reader" {
+  scope                = azurerm_private_endpoint.file.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_machine_learning_workspace.this.identity[0].principal_id
+}
+
+# Human access is granted to the user's object in the resource tenant. For an
+# external account, invite it as a B2B guest before applying this configuration.
+resource "azurerm_role_assignment" "workspace_user_ml_ds" {
+  scope                = azurerm_machine_learning_workspace.this.id
+  role_definition_name = "AzureML Data Scientist"
+  principal_id         = var.workspace_user_object_id
+  principal_type       = "User"
+}
+
+resource "azurerm_role_assignment" "workspace_user_blob" {
+  scope                = azurerm_storage_account.this.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.workspace_user_object_id
+  principal_type       = "User"
 }

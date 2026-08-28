@@ -21,7 +21,7 @@ output "jumpbox_name" {
 
 output "jumpbox_identity_client_id" {
   value       = azurerm_user_assigned_identity.jumpbox.client_id
-  description = "Use with `az login --identity --username <client_id>` on the jump box."
+  description = "Client ID of the jump box automation identity; human users sign in interactively."
 }
 
 output "jumpbox_admin_password" {

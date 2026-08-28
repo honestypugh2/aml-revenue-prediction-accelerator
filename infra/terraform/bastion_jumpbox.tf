@@ -1,7 +1,6 @@
 # -----------------------------------------------------------------------------
-# Azure Bastion + Windows jump box for secure, browserless access to the
-# workspace. Use `az login --identity` on the jump box to avoid Conditional
-# Access issues on non-compliant devices.
+# Azure Bastion + Windows jump box for private access to the workspace. Human
+# users sign in interactively; the attached identity is for automation.
 # -----------------------------------------------------------------------------
 
 resource "azurerm_public_ip" "bastion" {
